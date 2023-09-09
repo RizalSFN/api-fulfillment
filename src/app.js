@@ -11,11 +11,13 @@ const createUser = require("./middleware/user/create-user.js");
 const detailUser = require("./middleware/user/detail-user.js");
 const updateUser = require("./middleware/user/update-user.js");
 const updateStatus = require("./middleware/user/update-status-user.js");
+const listProduct = require("./middleware/barang/list-product.js");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// <===============================Route Default=============================>
 app.get("/", (req, res) => {
   successResponse(
     200,
@@ -25,12 +27,14 @@ app.get("/", (req, res) => {
   );
 });
 
+// <=====================================Login===============================>
 app.post("/login", loginMiddleware, (req, res) => {
   const token = req.token;
   res.cookie("TokenJWT", token, { httpOnly: true, maxAge: 172800000 });
   successResponse(200, "Login success", "Success", res);
 });
 
+// <===============================User Management===========================>
 app.get("/users", verifyToken, listUser, (req, res) => {
   const data = req.userData;
   successResponse(200, data, "List user", res);
@@ -57,6 +61,12 @@ app.patch(
   }
 );
 
+// <===============================User Management===========================>
+app.get("/product", verifyToken, listProduct, (req, res) => {
+  successResponse(200, req.productData, "Success", res);
+});
+
+// <=================================Logout==================================>
 app.delete("/logout", verifyToken, logoutMiddleware, (req, res) => {
   res.clearCookie("TokenJWT");
   successResponse(200, "Redirect ke hal. login", "Logout success", res);
