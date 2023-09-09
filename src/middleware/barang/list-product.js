@@ -13,7 +13,7 @@ const listProduct = (req, res, next) => {
 
     if (!result) return errorResponse(404, "Not found", res);
 
-    if (result == undefined || result == []) {
+    if (result[0] == undefined || result[0] == []) {
       return errorResponse(404, "Not found", res);
     }
 

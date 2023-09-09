@@ -12,6 +12,7 @@ const detailUser = require("./middleware/user/detail-user.js");
 const updateUser = require("./middleware/user/update-user.js");
 const updateStatus = require("./middleware/user/update-status-user.js");
 const listProduct = require("./middleware/barang/list-product.js");
+const detailProduct = require("./middleware/barang/detail-product.js");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -61,9 +62,13 @@ app.patch(
   }
 );
 
-// <===============================User Management===========================>
+// <============================Product Management===========================>
 app.get("/product", verifyToken, listProduct, (req, res) => {
   successResponse(200, req.productData, "Success", res);
+});
+
+app.get("/product/detail/:id", verifyToken, detailProduct, (req, res) => {
+  successResponse(200, req.detailProduct, "Success", res);
 });
 
 // <=================================Logout==================================>
