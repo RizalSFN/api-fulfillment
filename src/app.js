@@ -68,7 +68,7 @@ app.get("/product", verifyToken, listProduct, (req, res) => {
 });
 
 app.get("/product/detail/:id", verifyToken, detailProduct, (req, res) => {
-  successResponse(200, req.detailProduct, "Success", res);
+  successResponse(200, req.detail, "Success", res);
 });
 
 // <=================================Logout==================================>
