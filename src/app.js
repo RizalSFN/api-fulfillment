@@ -11,8 +11,9 @@ const createUser = require("./middleware/user/create-user.js");
 const detailUser = require("./middleware/user/detail-user.js");
 const updateUser = require("./middleware/user/update-user.js");
 const updateStatus = require("./middleware/user/update-status-user.js");
-const listProduct = require("./middleware/barang/list-product.js");
-const detailProduct = require("./middleware/barang/detail-product.js");
+const listProduct = require("./middleware/product/list-product.js");
+const detailProduct = require("./middleware/product/detail-product.js");
+const createProduct = require("./middleware/product/create-product.js");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -69,6 +70,10 @@ app.get("/product", verifyToken, listProduct, (req, res) => {
 
 app.get("/product/detail/:id", verifyToken, detailProduct, (req, res) => {
   successResponse(200, req.detail, "Success", res);
+});
+
+app.post("/product/create", verifyToken, createProduct, (req, res) => {
+  successResponse(200, "Upload success", "Success", res);
 });
 
 // <=================================Logout==================================>
