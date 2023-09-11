@@ -21,7 +21,7 @@ const detailProduct = (req, res, next) => {
 
     const detailProduct = result[0];
 
-    const sql1 = `SELECT ukuran, stok, harga FROM varian WHERE id_barang = ?`;
+    const sql1 = `SELECT ukuran, stok, harga, status_varian as "Status" FROM varian WHERE id_barang = ?`;
     db.query(sql1, [detailProduct.id], (err, varResult) => {
       if (err) return errorResponse(500, "Internal server error", res);
 

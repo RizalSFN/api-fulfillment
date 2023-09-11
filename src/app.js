@@ -16,6 +16,7 @@ const detailProduct = require("./middleware/product/detail-product.js");
 const createProduct = require("./middleware/product/create-product.js");
 const createVarian = require("./middleware/product/create-variant.js");
 const updateProduct = require("./middleware/product/update-product.js");
+const statusProduct = require("./middleware/product/update-status-product.js");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -85,6 +86,15 @@ app.post("/product/varian/create", verifyToken, createVarian, (req, res) => {
 app.patch("/product/update/:id", verifyToken, updateProduct, (req, res) => {
   successResponse(200, "Update success", "Success", res);
 });
+
+app.patch(
+  "/product/update/status/:statusVarian/:id",
+  verifyToken,
+  statusProduct,
+  (req, res) => {
+    successResponse(200, "Update success", "Success", res);
+  }
+);
 
 // <=================================Logout==================================>
 app.delete("/logout", verifyToken, logoutMiddleware, (req, res) => {
