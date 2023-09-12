@@ -17,7 +17,7 @@ const loginMiddleware = (req, res, next) => {
     const user = result[0];
 
     if (user == undefined) {
-      return errorResponse(401, "Invalid username or password", res);
+      return errorResponse(400, "Invalid username or password", res);
     }
 
     bcrypt.compare(req.body.password, user.password, (err, result) => {
@@ -26,11 +26,11 @@ const loginMiddleware = (req, res, next) => {
       }
 
       if (!result) {
-        return errorResponse(401, "Invalid username or password", res);
+        return errorResponse(400, "Invalid username or password", res);
       }
 
       if (user.status_user != "aktif") {
-        return errorResponse(401, "Status akun sudah nonaktif", res);
+        return errorResponse(400, "Status akun sudah nonaktif", res);
       }
 
       const data = {
@@ -50,7 +50,7 @@ const loginMiddleware = (req, res, next) => {
         `SELECT token FROM token_akses WHERE id_user = ?`,
         [user.id],
         (err, result) => {
-          if (err) return errorResponse(401, "Invalid token", res);
+          if (err) return errorResponse(403, "Invalid token", res);
 
           const tokenAkses = result[0];
 
