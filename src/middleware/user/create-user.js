@@ -22,8 +22,12 @@ const createUser = (req, res, next) => {
   if (data.role == "Supervisor") {
     const { nama, username, password, email } = req.body;
 
-    if (nama == undefined || nama == null) {
+    if (nama == [] || !nama) {
       return errorResponse(400, "Nama is required", res);
+    }
+
+    if (email == [] || !email) {
+      return errorResponse(400, "Email is required", res);
     }
 
     if (username.length < 12) {
@@ -68,15 +72,15 @@ const createUser = (req, res, next) => {
   if (data.role == "Superadmin") {
     const { nama, username, password, email, role } = req.body;
 
-    if (nama == []) {
+    if (nama == [] || !nama) {
       return errorResponse(400, "Nama is required", res);
     }
 
-    if (role == []) {
+    if (role == [] || !role) {
       return errorResponse(400, "Role is required", res);
     }
 
-    if (email == []) {
+    if (email == [] || !email) {
       return errorResponse(400, "Email is required", res);
     }
 

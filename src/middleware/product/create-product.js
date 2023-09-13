@@ -12,33 +12,42 @@ const createProduct = (req, res, next) => {
   if (!data) return errorResponse(403, "Invalid token", res);
 
   const { nama_barang, sku, deskripsi, foto, brand } = req.body;
-  const brandName = brand.toUpperCase();
 
-  if (nama_barang == []) {
-    return errorResponse(400, "Nama barang is required", res);
-  }
+  db.query(`SELECT sku FROM barang WHERE sku = '${sku}'`, (err, result) => {
+    if (err) return errorResponse(500, "Internal server error", res);
 
-  if (sku == []) {
-    return errorResponse(400, "SKU is required", res);
-  }
+    if (result[0] != [] || result) {
+      return errorResponse(400, "Product already exist", res);
+    }
 
-  if (deskripsi == []) {
-    return errorResponse(400, "Deskripsi is required", res);
-  }
+    const brandName = brand.toUpperCase();
 
-  if (foto == []) {
-    return errorResponse(400, "Foto is required", res);
-  }
+    if (nama_barang == []) {
+      return errorResponse(400, "Nama barang is required", res);
+    }
 
-  if (brand == []) {
-    return errorResponse(400, "Brand is required", res);
-  }
+    if (sku == []) {
+      return errorResponse(400, "SKU is required", res);
+    }
 
-  const sql = `INSERT INTO barang (nama_barang, sku, deskripsi, foto, id_brand, id_user) VALUES ('${nama_barang}', '${sku}', '${deskripsi}', '${foto}', '${brandName}','${data.id_user}')`;
-  db.query(sql, (err, result) => {
-    if (err) return errorResponse(500, err.message, res);
+    if (deskripsi == []) {
+      return errorResponse(400, "Deskripsi is required", res);
+    }
 
-    next();
+    if (foto == []) {
+      return errorResponse(400, "Foto is required", res);
+    }
+
+    if (brand == []) {
+      return errorResponse(400, "Brand is required", res);
+    }
+
+    const sql = `INSERT INTO barang (nama_barang, sku, deskripsi, foto, id_brand, id_user) VALUES ('${nama_barang}', '${sku}', '${deskripsi}', '${foto}', '${brandName}','${data.id_user}')`;
+    db.query(sql, (err, result) => {
+      if (err) return errorResponse(500, err.message, res);
+
+      next();
+    });
   });
 };
 

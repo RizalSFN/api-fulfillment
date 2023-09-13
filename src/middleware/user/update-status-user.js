@@ -25,7 +25,7 @@ const updateStatus = (req, res, next) => {
     }
 
     if (data.role == "Superadmin") {
-      const sql = `UPDATE users SET status_user = ? WHERE ? AND id_role != 'SU'`;
+      const sql = `UPDATE users SET status_user = ? WHERE id = ? AND id_role != 'SU'`;
       db.query(sql, [req.params.status, req.params.id], (err, result) => {
         if (err) return errorResponse(500, "Internal server error", res);
 
