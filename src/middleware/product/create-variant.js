@@ -13,6 +13,22 @@ const createVarian = (req, res, next) => {
 
   const { id_barang, stok, harga, ukuran } = req.body;
 
+  if (id_barang == []) {
+    return errorResponse(400, "id barang is required", res);
+  }
+
+  if (stok == []) {
+    return errorResponse(400, "Stok is required", res);
+  }
+
+  if (harga == []) {
+    return errorResponse(400, "Harga is required", res);
+  }
+
+  if (ukuran == []) {
+    return errorResponse(400, "Ukuran is required", res);
+  }
+
   const sql = `INSERT INTO varian (id_barang, stok, harga, ukuran) VALUES ('${id_barang}', '${stok}', '${harga}', '${ukuran}')`;
   db.query(sql, (err, result) => {
     if (err) return errorResponse(500, "Internal server error", res);

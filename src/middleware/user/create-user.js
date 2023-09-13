@@ -22,6 +22,10 @@ const createUser = (req, res, next) => {
   if (data.role == "Supervisor") {
     const { nama, username, password, email } = req.body;
 
+    if (nama == undefined || nama == null) {
+      return errorResponse(400, "Nama is required", res);
+    }
+
     if (username.length < 12) {
       return errorResponse(
         400,
@@ -64,6 +68,18 @@ const createUser = (req, res, next) => {
   if (data.role == "Superadmin") {
     const { nama, username, password, email, role } = req.body;
 
+    if (nama == []) {
+      return errorResponse(400, "Nama is required", res);
+    }
+
+    if (role == []) {
+      return errorResponse(400, "Role is required", res);
+    }
+
+    if (email == []) {
+      return errorResponse(400, "Email is required", res);
+    }
+
     const str = role.toUpperCase();
 
     if (str == "SU") {
@@ -92,6 +108,10 @@ const createUser = (req, res, next) => {
         "Password harus berjumlah minimal 12 karakter",
         res
       );
+    }
+
+    if (!isEmail(email)) {
+      return errorResponse(400, "Invalid email", res);
     }
 
     bcrypt.hash(password, 12, (err, hash) => {
