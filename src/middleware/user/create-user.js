@@ -22,51 +22,73 @@ const createUser = (req, res, next) => {
   if (data.role == "Supervisor") {
     const { nama, username, password, email } = req.body;
 
-    if (nama == [] || !nama) {
-      return errorResponse(400, "Nama is required", res);
-    }
+    db.query(
+      `SELECT username FROM users WHERE username = '${username}'`,
+      (err, result) => {
+        if (err) return errorResponse(500, "Internal server error", res);
 
-    if (email == [] || !email) {
-      return errorResponse(400, "Email is required", res);
-    }
+        if (result[0] != undefined) {
+          return errorResponse(400, "Username already exist", res);
+        }
 
-    if (username.length < 12) {
-      return errorResponse(
-        400,
-        "username harus berjumlah 12 karakter atau lebih",
-        res
-      );
-    }
+        db.query(
+          `SELECT email FROM users WHERE email = '${email}'`,
+          (err, result) => {
+            if (err) return errorResponse(500, "Internal server error", res);
 
-    if (!/\d/.test(password)) {
-      return errorResponse(
-        400,
-        "Password harus terdiri dari huruf dan angka",
-        res
-      );
-    }
+            if (result[0] != undefined) {
+              return errorResponse(400, "Email already exist", res);
+            }
 
-    if (password.length < 12) {
-      return errorResponse(
-        400,
-        "Password harus berjumlah 12 karakter atau lebih",
-        res
-      );
-    }
+            if (nama == [] || !nama) {
+              return errorResponse(400, "Nama is required", res);
+            }
 
-    if (!isEmail(email)) {
-      return errorResponse(400, "Invalid email", res);
-    }
+            if (email == [] || !email) {
+              return errorResponse(400, "Email is required", res);
+            }
 
-    bcrypt.hash(password, 12, (err, hash) => {
-      if (err) return errorResponse(500, err.message, res);
+            if (username.length < 12) {
+              return errorResponse(
+                400,
+                "username harus berjumlah 12 karakter atau lebih",
+                res
+              );
+            }
 
-      const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user, id_user_create) VALUES ('${nama}', '${username}', '${hash}', '${email}', 'KRY', 'aktif', '${data.id_user}')`;
-      db.query(sql, (err, result) => {
-        if (err) return errorResponse(500, err.message, res);
-        next();
-      });
-    });
+            if (!/\d/.test(password)) {
+              return errorResponse(
+                400,
+                "Password harus terdiri dari huruf dan angka",
+                res
+              );
+            }
+
+            if (password.length < 12) {
+              return errorResponse(
+                400,
+                "Password harus berjumlah 12 karakter atau lebih",
+                res
+              );
+            }
+
+            if (!isEmail(email)) {
+              return errorResponse(400, "Invalid email", res);
+            }
+
+            bcrypt.hash(password, 12, (err, hash) => {
+              if (err) return errorResponse(500, err.message, res);
+
+              const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user, id_user_create) VALUES ('${nama}', '${username}', '${hash}', '${email}', 'KRY', 'aktif', '${data.id_user}')`;
+              db.query(sql, (err, result) => {
+                if (err) return errorResponse(500, err.message, res);
+                next();
+              });
+            });
+          }
+        );
+      }
+    );
   }
 
   if (data.role == "Superadmin") {

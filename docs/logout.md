@@ -21,6 +21,6 @@
 ```json
 {
   "error": "Unauthorized", // 401
-  "error": "..." // 500
+  "error": "Internal server error" // 500
 }
 ```

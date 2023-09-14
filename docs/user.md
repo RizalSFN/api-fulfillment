@@ -32,7 +32,7 @@
   "message": "Unauthorized", //401
   "message": "Data tidak ditemukan", //404
   "message": "Akses ditolak", // 403
-  "message": "..." // 500
+  "message": "Internal server error" // 500
 }
 ```
 
@@ -71,7 +71,7 @@
   "message": "Unauthorized", //401
   "message": "Data tidak ditemukan", //404
   "message": "Akses ditolak", // 403
-  "message": "..." //500
+  "message": "Internal server error" //500
 }
 ```
 
@@ -95,7 +95,7 @@
   "username": "...",
   "password": "...",
   "email": "...",
-  "role": "..."
+  "role": "..." // akses = Superadmin
 }
 ```
 
@@ -108,7 +108,7 @@
   "message": "email sudah terdaftar", // 400
   "message": "username sudah terdaftar", // 400
   "message": "Akses ditolak", // 403
-  "message": "..." // 500
+  "message": "Internal server error" // 500
 }
 ```
 

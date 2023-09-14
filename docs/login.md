@@ -26,6 +26,6 @@
 ```json
 {
   "message": "Invalid username or password", // 400
-  "message": "..." // 500
+  "message": "Internal server error" // 500
 }
 ```
