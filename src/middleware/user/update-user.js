@@ -11,39 +11,59 @@ const updateUser = (req, res, next) => {
   const data = req.tokenDecode;
   const idUser = req.params.id;
 
-  const updateData = req.body;
+  const { nama, username, email, role } = req.body;
 
   if (!data) return errorResponse(403, "Invalid token", res);
 
-  if (updateData.email != null || updateData.email != undefined) {
-    if (!isEmail(updateData.email)) {
-      return errorResponse(400, "Invalid email", res);
-    }
-  }
-
   if (data.role == "Karyawan") return errorResponse(403, "Akses ditolak", res);
 
-  if (data.role == "Supervisor") {
-    const sql = `UPDATE users SET ? WHERE id = ? && id_role = 'KRY'`;
-    db.query(sql, [updateData, idUser], (err, result) => {
-      if (err) return errorResponse(500, err.message, res);
-      if (result.affectedRows == 0) {
-        return errorResponse(403, "Cannot update user", res);
-      }
-      next();
-    });
+  if (!isEmail(email)) {
+    return errorResponse(400, "Invalid email", res);
   }
 
-  if (data.role == "Superadmin") {
-    const sql = `UPDATE users SET ? WHERE id = ? && id_role != 'SU'`;
-    db.query(sql, [updateData, idUser], (err, result) => {
-      if (err) return errorResponse(500, err.message, res);
-      if (result.affectedRows == 0) {
-        return errorResponse(403, "Cannot update user", res);
+  db.query(
+    `SELECT username FROM users WHERE username = '${username}' AND id != '${idUser}'`,
+    (err, result) => {
+      if (err) return errorResponse(500, "Internal server error", res);
+
+      if (result[0] != undefined) {
+        return errorResponse(400, "Username already exist", res);
       }
-      next();
-    });
-  }
+
+      db.query(
+        `SELECT email FROM users WHERE email = '${username}' AND id != '${idUser}'`,
+        (err, result) => {
+          if (err) return errorResponse(500, "Internal server error", res);
+
+          if (result[0] != undefined) {
+            return errorResponse(400, "Email already exist", res);
+          }
+
+          if (data.role == "Supervisor") {
+            const sql = `UPDATE users SET nama = '${nama}', username = '${username}', email = '${email}', role = '${role}' WHERE id = ? && id_role = 'KRY'`;
+            db.query(sql, [idUser], (err, result) => {
+              if (err) return errorResponse(500, err.message, res);
+              if (result.affectedRows == 0) {
+                return errorResponse(400, "Cannot update user", res);
+              }
+              next();
+            });
+          }
+
+          if (data.role == "Superadmin") {
+            const sql = `UPDATE users SET nama = '${nama}', username = '${username}', email = '${email}', role = '${role}' WHERE id = ? && id_role != 'SU'`;
+            db.query(sql, [idUser], (err, result) => {
+              if (err) return errorResponse(500, err.message, res);
+              if (result.affectedRows == 0) {
+                return errorResponse(400, "Cannot update user", res);
+              }
+              next();
+            });
+          }
+        }
+      );
+    }
+  );
 };
 
 module.exports = updateUser;

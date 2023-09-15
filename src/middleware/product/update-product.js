@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 const updateProduct = (req, res, next) => {
   const data = req.tokenDecode;
 
-  if (!data) return errorResponse(403, "Invalid token", res);
+  if (!data) return errorResponse(401, "Invalid token", res);
 
   const updateData = req.body;
   const idProduct = req.params.id;

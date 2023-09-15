@@ -4,7 +4,7 @@ const db = require("../../application/config.js");
 const statusProduct = (req, res, next) => {
   const data = req.tokenDecode;
 
-  if (!data) return errorResponse(403, "Invalid token", res);
+  if (!data) return errorResponse(401, "Invalid token", res);
 
   const sql = `UPDATE varian SET status_varian = ? WHERE id = ?`;
   db.query(sql, [req.params.statusVarian, req.params.id], (err, result) => {

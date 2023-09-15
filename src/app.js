@@ -57,14 +57,9 @@ app.patch("/users/update/:id", verifyToken, updateUser, (req, res) => {
   successResponse(200, "Update berhasil", "success", res);
 });
 
-app.patch(
-  "/users/update/status/:status/:id",
-  verifyToken,
-  updateStatus,
-  (req, res) => {
-    successResponse(200, "Status berhasil diperbaharui", "Success", res);
-  }
-);
+app.patch("/users/status", verifyToken, updateStatus, (req, res) => {
+  successResponse(200, "Status berhasil diperbaharui", "Success", res);
+});
 
 // <============================Product Management===========================>
 app.get("/product", verifyToken, listProduct, (req, res) => {

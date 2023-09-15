@@ -46,8 +46,6 @@
 
 ### Authorization : token
 
-### Parameter query : id
-
 ### Deskripsi : API ini digunakan untuk mengambil detail data user
 
 ### Response body success :
@@ -104,7 +102,6 @@
 ```json
 {
   "message": "Unauthorized", // 401
-  "message": "mohon isi field dengan benar", // 400
   "message": "email sudah terdaftar", // 400
   "message": "username sudah terdaftar", // 400
   "message": "Akses ditolak", // 403
@@ -122,8 +119,6 @@
 
 ### Authorization : token
 
-### Parameter query : id
-
 ### Deskripsi : API ini digunakan untuk meng-update data user
 
 ### Request body :
@@ -131,8 +126,9 @@
 ```json
 {
   "nama": "...",
+  "username": "...",
   "email": "...",
-  "role": "..."
+  "role": "..." // akses : superadmin
 }
 ```
 
@@ -140,10 +136,7 @@
 
 ```json
 {
-  "message": "Update success", // 200
-  "payload": {
-    "changedRows": 1
-  }
+  "message": "Update success" // 200
 }
 ```
 
@@ -159,23 +152,15 @@
 
 ## 5. Nonactive / activate user
 
-### Endpoint : /users/updateStatus/{id}
+### Endpoint : /users/status
 
 ### Method : PATCH
 
 ### Authorization : token
 
-### Parameter query : id
+### Parameter query : stat, id
 
 ### Deskripsi : API ini digunakan untuk menonaktifkan / mengaktifkan user
-
-### Request body :
-
-```json
-{
-  "status": "..."
-}
-```
 
 ### Response body success :
 

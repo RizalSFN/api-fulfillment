@@ -94,61 +94,83 @@ const createUser = (req, res, next) => {
   if (data.role == "Superadmin") {
     const { nama, username, password, email, role } = req.body;
 
-    if (nama == [] || !nama) {
-      return errorResponse(400, "Nama is required", res);
-    }
+    db.query(
+      `SELECT username FROM users WHERE username = '${username}'`,
+      (err, result) => {
+        if (err) return errorResponse(500, "Internal server error", res);
 
-    if (role == [] || !role) {
-      return errorResponse(400, "Role is required", res);
-    }
+        if (result[0] != undefined) {
+          return errorResponse(400, "Username already exist", res);
+        }
 
-    if (email == [] || !email) {
-      return errorResponse(400, "Email is required", res);
-    }
+        db.query(
+          `SELECT email FROM users WHERE email = '${email}'`,
+          (err, result) => {
+            if (err) return errorResponse(500, "Internal server error", res);
 
-    const str = role.toUpperCase();
+            if (result[0] != undefined) {
+              return errorResponse(400, "Email already exist");
+            }
 
-    if (str == "SU") {
-      return errorResponse(400, "Akun superadmin sudah ada", res);
-    }
+            if (nama == [] || !nama) {
+              return errorResponse(400, "Nama is required", res);
+            }
 
-    if (username.length < 12) {
-      return errorResponse(
-        400,
-        "Username harus berjumlah minimal 12 karakter",
-        res
-      );
-    }
+            if (role == [] || !role) {
+              return errorResponse(400, "Role is required", res);
+            }
 
-    if (!/\d/.test(password)) {
-      return errorResponse(
-        400,
-        "Password harus terdiri dari huruf dan angka",
-        res
-      );
-    }
+            if (email == [] || !email) {
+              return errorResponse(400, "Email is required", res);
+            }
 
-    if (password.length < 12) {
-      return errorResponse(
-        400,
-        "Password harus berjumlah minimal 12 karakter",
-        res
-      );
-    }
+            const str = role.toUpperCase();
 
-    if (!isEmail(email)) {
-      return errorResponse(400, "Invalid email", res);
-    }
+            if (str == "SU") {
+              return errorResponse(400, "Akun superadmin sudah ada", res);
+            }
 
-    bcrypt.hash(password, 12, (err, hash) => {
-      if (err) return errorResponse(500, err.message, res);
+            if (username.length < 12) {
+              return errorResponse(
+                400,
+                "Username harus berjumlah minimal 12 karakter",
+                res
+              );
+            }
 
-      const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user, id_user_create) VALUES ('${nama}', '${username}', '${hash}', '${email}', '${role}', 'aktif', '${data.id_user}')`;
-      db.query(sql, (err, result) => {
-        if (err) return errorResponse(500, err.message, res);
-        next();
-      });
-    });
+            if (!/\d/.test(password)) {
+              return errorResponse(
+                400,
+                "Password harus terdiri dari huruf dan angka",
+                res
+              );
+            }
+
+            if (password.length < 12) {
+              return errorResponse(
+                400,
+                "Password harus berjumlah minimal 12 karakter",
+                res
+              );
+            }
+
+            if (!isEmail(email)) {
+              return errorResponse(400, "Invalid email", res);
+            }
+
+            bcrypt.hash(password, 12, (err, hash) => {
+              if (err) return errorResponse(500, err.message, res);
+
+              const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user, id_user_create) VALUES ('${nama}', '${username}', '${hash}', '${email}', '${role}', 'aktif', '${data.id_user}')`;
+              db.query(sql, (err, result) => {
+                if (err) return errorResponse(500, err.message, res);
+                next();
+              });
+            });
+          }
+        );
+      }
+    );
   }
 };
 
