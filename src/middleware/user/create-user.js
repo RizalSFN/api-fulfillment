@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 const { default: isEmail } = require("validator/lib/isEmail.js");
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 const createUser = (req, res, next) => {
   const data = req.tokenDecode;

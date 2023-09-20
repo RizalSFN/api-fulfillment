@@ -8,7 +8,6 @@ require("dotenv").config();
 const secret_key = process.env.SECRET_KEY;
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 const loginMiddleware = (req, res, next) => {
   const sql = `SELECT users.id, users.nama, users.password, role_users.role, users.status_user FROM users INNER JOIN role_users ON users.id_role = role_users.id WHERE username = ?`;
