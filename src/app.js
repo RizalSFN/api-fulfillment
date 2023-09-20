@@ -19,7 +19,6 @@ const updateProduct = require("./middleware/product/update-product.js");
 const statusProduct = require("./middleware/product/update-status-product.js");
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // <===============================Route Default=============================>
