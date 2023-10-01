@@ -46,16 +46,12 @@ const loginMiddleware = (req, res, next) => {
       const time = Date.now() / 1000 + 3600;
 
       db.query(
-        `SELECT token FROM token_akses WHERE id_user = ?`,
+        `SELECT * FROM token_akses WHERE id_user = ?`,
         [user.id],
         (err, result) => {
           if (err) return errorResponse(403, "Invalid token", res);
 
           const tokenAkses = result[0];
-
-          if (tokenAkses != undefined) {
-            return errorResponse(400, "Logout terlebih dahulu", res);
-          }
 
           if (tokenAkses == undefined) {
             const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${time}')`;
@@ -65,6 +61,32 @@ const loginMiddleware = (req, res, next) => {
               req.token = token;
               next();
             });
+          }
+
+          if (tokenAkses != undefined) {
+            const expire = tokenAkses.expire_token;
+            if (expire < Date.now() / 1000) {
+              db.query(
+                `DELETE FROM token_akses WHERE id_user = ?`,
+                [user.id],
+                (err, result) => {
+                  if (err) {
+                    return errorResponse(500, "Internal server error", res);
+                  }
+
+                  const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${time}')`;
+                  db.query(queri, (err, result) => {
+                    if (err)
+                      return errorResponse(500, "Internal server error", res);
+                    req.user = user;
+                    req.token = token;
+                    next();
+                  });
+                }
+              );
+            }
+
+            return errorResponse(400, "Logout terlebih dahulu", res);
           }
         }
       );

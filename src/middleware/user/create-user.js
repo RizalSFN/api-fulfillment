@@ -78,7 +78,7 @@ const createUser = (req, res, next) => {
             bcrypt.hash(password, 12, (err, hash) => {
               if (err) return errorResponse(500, err.message, res);
 
-              const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user, id_user_create) VALUES ('${nama}', '${username}', '${hash}', '${email}', 'KRY', 'aktif', '${data.id_user}')`;
+              const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user) VALUES ('${nama}', '${username}', '${hash}', '${email}', 'KRY', 'aktif')`;
               db.query(sql, (err, result) => {
                 if (err) return errorResponse(500, err.message, res);
                 next();
@@ -160,7 +160,7 @@ const createUser = (req, res, next) => {
             bcrypt.hash(password, 12, (err, hash) => {
               if (err) return errorResponse(500, err.message, res);
 
-              const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user, id_user_create) VALUES ('${nama}', '${username}', '${hash}', '${email}', '${role}', 'aktif', '${data.id_user}')`;
+              const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user) VALUES ('${nama}', '${username}', '${hash}', '${email}', '${role}', 'aktif',)`;
               db.query(sql, (err, result) => {
                 if (err) return errorResponse(500, err.message, res);
                 next();
