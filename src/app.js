@@ -93,7 +93,7 @@ app.patch(
 // <=================================Logout==================================>
 app.delete("/logout", verifyToken, logoutMiddleware, (req, res) => {
   res.clearCookie("TokenJWT");
-  successResponse(200, "Redirect ke hal. login", "Logout success", res);
+  successResponse(200, "Logout success", "Success", res);
 });
 
 app.listen(port, () => {

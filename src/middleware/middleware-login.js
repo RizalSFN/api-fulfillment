@@ -49,7 +49,7 @@ const loginMiddleware = (req, res, next) => {
         `SELECT * FROM token_akses WHERE id_user = ?`,
         [user.id],
         (err, result) => {
-          if (err) return errorResponse(403, "Invalid token", res);
+          if (err) return errorResponse(500, "Internal server error", res);
 
           const tokenAkses = result[0];
 
@@ -57,6 +57,11 @@ const loginMiddleware = (req, res, next) => {
             const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${time}')`;
             db.query(queri, (err, result) => {
               if (err) return errorResponse(500, "Internal server error", res);
+
+              // const login_time = Date.
+
+              // db.query(`INSERT INTO history ('id_user_action','login_time') VALUES ('${user.id}', '${})`)
+
               req.user = user;
               req.token = token;
               next();
@@ -85,7 +90,10 @@ const loginMiddleware = (req, res, next) => {
                 }
               );
             }
+          }
 
+          const timeNow = Date.now() / 1000;
+          if (tokenAkses.expire_token > timeNow) {
             return errorResponse(400, "Logout terlebih dahulu", res);
           }
         }
