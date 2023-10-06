@@ -6,8 +6,6 @@ const listProduct = (req, res, next) => {
 
   if (!data) return errorResponse(403, "Invalid token", res);
 
-  // const sql = `SELECT barang.id, barang.sku as 'SKU', barang.deskripsi as 'Deskripsi', barang.foto as 'Foto', brand.nama_brand as 'Brand', varian.jenis_barang as "Kategori Product" FROM varian INNER JOIN barang ON varian.id_barang = barang.id INNER JOIN brand ON barang.id_brand = brand.id`;
-
   const sql = `SELECT barang.id, barang.nama_barang as "Nama barang", barang.sku as "SKU", barang.deskripsi as "Deskripsi", barang.foto as "Foto", brand.nama_brand as "Brand" FROM barang INNER JOIN brand ON barang.id_brand = brand.id`;
 
   db.query(sql, (err, result) => {

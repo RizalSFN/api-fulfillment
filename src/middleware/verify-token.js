@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
   db.query(
     `SELECT * FROM token_akses WHERE token = '${token}'`,
     (err, result) => {
-      if (err) throw errorResponse(500, "Internal server error", res);
+      if (err) return errorResponse(500, "Internal server error", res);
 
       jwt.verify(token, secret_key, (err, result) => {
         if (err) {
