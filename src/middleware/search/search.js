@@ -27,7 +27,7 @@ const search = (req, res, next) => {
   }
 
   if (data.role == "Supervisor") {
-    const sql = `SELECT users.id, users.nama, role_users.role, users.status_user FROM users INNER JOIN role_users ON users.id_role = role_users.id WHERE users.id_role != 'SU'`;
+    const sql = `SELECT users.id, users.nama, role_users.role, users.status_user FROM users INNER JOIN role_users ON users.id_role = role_users.id WHERE users.id_role != 'SU' AND users.id LIKE '%${keyword}%' OR users.nama LIKE '%${keyword}%' OR users.status_user LIKE '%${keyword}%'`;
   }
 
   if (data.role == "Superadmin") {
