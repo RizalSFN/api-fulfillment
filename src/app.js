@@ -17,6 +17,7 @@ const createProduct = require("./middleware/product/create-product.js");
 const createVarian = require("./middleware/product/create-variant.js");
 const updateProduct = require("./middleware/product/update-product.js");
 const statusProduct = require("./middleware/product/update-status-product.js");
+const search = require("./middleware/search/search.js");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -36,6 +37,11 @@ app.post("/login", loginMiddleware, (req, res) => {
   const token = req.token;
   res.cookie("TokenJWT", token, { httpOnly: true, maxAge: 172800000 });
   successResponse(200, "Login success", "Success", res);
+});
+
+// <=====================================Search===============================>
+app.get("/search", verifyToken, search, (req, res) => {
+  successResponse(200, req.dataSearch, "Success", res);
 });
 
 // <===============================User Management===========================>
