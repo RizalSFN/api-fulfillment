@@ -8,7 +8,7 @@ const verifyToken = (req, res, next) => {
   const token = req.cookies.TokenJWT;
 
   if (!token) {
-    return errorResponse(401, "Invalid token", res);
+    return errorResponse(401, "Invalid token", "Unauthorized", res);
   }
 
   db.query(

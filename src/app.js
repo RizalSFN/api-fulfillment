@@ -28,6 +28,7 @@ app.get("/", (req, res) => {
     200,
     "Welcome to Fulfillment API",
     "API Running Success",
+    "OK",
     res
   );
 });
@@ -36,70 +37,77 @@ app.get("/", (req, res) => {
 app.post("/login", loginMiddleware, (req, res) => {
   const token = req.token;
   res.cookie("TokenJWT", token, { httpOnly: true, maxAge: 172800000 });
-  successResponse(200, "Login success", "Success", res);
+  successResponse(200, "", "Login Success", "OK", res);
 });
 
-// <=====================================Search===============================>
+// TODO JUMAT DISEKOLAH JANGAN LUPA SOALNYA NGERJAINNYA SENDIRI
+
+app.get("/coba", (req, res) => {
+  successResponse(200, dateFormat, "success", "OK", res);
+  console.log("MELEDAK!!!");
+});
+
+// <=====================================Search==============================>
 app.get("/search", verifyToken, search, (req, res) => {
-  successResponse(200, req.dataSearch, "Success", res);
+  successResponse(200, req.searchData, "Success", "OK", res);
 });
 
 // <===============================User Management===========================>
 app.get("/users", verifyToken, listUser, (req, res) => {
   const data = req.userData;
-  successResponse(200, data, "List user", res);
+  successResponse(200, data, "List User", "OK", res);
 });
 
 app.get("/users/detail/:id", verifyToken, detailUser, (req, res) => {
-  successResponse(200, req.userDetail, "Detail user", res);
+  successResponse(200, req.userDetail, "Detail User by Id", "OK", res);
 });
 
 app.post("/users/create", verifyToken, createUser, (req, res) => {
-  successResponse(200, "Data berhasil diupload", "Create success", res);
+  successResponse(200, "", "Upload User Success", "OK", res);
 });
 
 app.patch("/users/update/:id", verifyToken, updateUser, (req, res) => {
-  successResponse(200, "Update berhasil", "success", res);
+  successResponse(200, "", "Update User Success", "OK", res);
 });
 
 app.patch("/users/status", verifyToken, updateStatus, (req, res) => {
-  successResponse(200, "Status berhasil diperbaharui", "Success", res);
+  successResponse(200, "", "Update Status User Success", "OK", res);
 });
 
 // <============================Product Management===========================>
-app.get("/product", verifyToken, listProduct, (req, res) => {
-  successResponse(200, req.productData, "Success", res);
+app.get("/items", verifyToken, listProduct, (req, res) => {
+  successResponse(200, req.productData, "List Items", "OK", res);
 });
 
-app.get("/product/detail/:id", verifyToken, detailProduct, (req, res) => {
-  successResponse(200, req.detail, "Success", res);
+app.get("/items/detail/:id", verifyToken, detailProduct, (req, res) => {
+  successResponse(200, req.detail, "Detail Item by Id", "OK", res);
 });
 
-app.post("/product/create", verifyToken, createProduct, (req, res) => {
-  successResponse(200, "Upload success", "Success", res);
+app.post("/items/create", verifyToken, createProduct, (req, res) => {
+  successResponse(200, "", "Upload Item Success", "OK", res);
 });
 
-app.post("/product/varian/create", verifyToken, createVarian, (req, res) => {
-  successResponse(200, "Upload success", "Success", res);
+app.post("/items/varian/create", verifyToken, createVarian, (req, res) => {
+  successResponse(200, "", "Upload Variant Item Success", "OK", res);
 });
 
-app.patch("/product/update/:id", verifyToken, updateProduct, (req, res) => {
-  successResponse(200, "Update success", "Success", res);
+app.patch("/items/update/:id", verifyToken, updateProduct, (req, res) => {
+  successResponse(200, "", "Update Item Success", "OK", res);
 });
 
 app.patch(
-  "/product/update/status/:statusVarian/:id",
+  "/items/update/status/:statusVarian/:id",
   verifyToken,
   statusProduct,
   (req, res) => {
-    successResponse(200, "Update success", "Success", res);
+    successResponse(200, "", "Update Status Variant Item Success", "OK", res);
   }
 );
 
 // <=================================Logout==================================>
 app.delete("/logout", verifyToken, logoutMiddleware, (req, res) => {
   res.clearCookie("TokenJWT");
-  successResponse(200, "Logout success", "Success", res);
+  successResponse(200, "", "Logout Success", "OK", res);
 });
 
 app.listen(port, () => {

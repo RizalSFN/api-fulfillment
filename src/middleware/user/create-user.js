@@ -11,46 +11,70 @@ const createUser = (req, res, next) => {
   const data = req.tokenDecode;
 
   if (!data) {
-    return errorResponse(401, "Invalid token", res);
+    return errorResponse(401, "Invalid token", "Unauthorized", res);
   }
 
   if (data.role == "Karyawan") {
-    return errorResponse(401, "Akses ditolak", res);
-  }
-
-  if (data.role == "Supervisor") {
+    return errorResponse(403, "Access denied", "Forbidden", res);
+  } else if (data.role == "Supervisor") {
     const { nama, username, password, email } = req.body;
 
+    if (req.body.role) {
+      return errorResponse(400, "Cannot add role", "Bad request", res);
+    }
     db.query(
       `SELECT username FROM users WHERE username = '${username}'`,
       (err, result) => {
-        if (err) return errorResponse(500, "Internal server error", res);
+        if (err)
+          return errorResponse(500, err.message, "Internal server error", res);
 
         if (result[0] != undefined) {
-          return errorResponse(400, "Username already exist", res);
+          return errorResponse(
+            400,
+            "Username already exist",
+            "Bad request",
+            res
+          );
         }
 
         db.query(
           `SELECT email FROM users WHERE email = '${email}'`,
           (err, result) => {
-            if (err) return errorResponse(500, "Internal server error", res);
+            if (err)
+              return errorResponse(
+                500,
+                err.message,
+                "Internal server error",
+                res
+              );
 
-            if (result[0] != undefined) {
-              return errorResponse(400, "Email already exist", res);
+            if (result[0] !== undefined) {
+              return errorResponse(
+                400,
+                "Email already exist",
+                "Bad request",
+                res
+              );
             }
 
-            if (nama == [] || !nama) {
-              return errorResponse(400, "Nama is required", res);
+            if (nama === undefined) {
+              return errorResponse(400, "Nama is required", "Bad request", res);
             }
 
-            if (email == [] || !email) {
-              return errorResponse(400, "Email is required", res);
+            if (email === undefined) {
+              return errorResponse(
+                400,
+                "Email is required",
+                "Bad request",
+                res
+              );
             }
 
             if (username.length < 12) {
               return errorResponse(
                 400,
-                "username harus berjumlah 12 karakter atau lebih",
+                "Username must be 12 character or more",
+                "Bad request",
                 res
               );
             }
@@ -58,7 +82,8 @@ const createUser = (req, res, next) => {
             if (!/\d/.test(password)) {
               return errorResponse(
                 400,
-                "Password harus terdiri dari huruf dan angka",
+                "Password must contains alphanumeric",
+                "Bad request",
                 res
               );
             }
@@ -66,13 +91,14 @@ const createUser = (req, res, next) => {
             if (password.length < 12) {
               return errorResponse(
                 400,
-                "Password harus berjumlah 12 karakter atau lebih",
+                "Password must be 12 character or more ",
+                "Bad request",
                 res
               );
             }
 
             if (!isEmail(email)) {
-              return errorResponse(400, "Invalid email", res);
+              return errorResponse(400, "Invalid email", "Bad request", res);
             }
 
             bcrypt.hash(password, 12, (err, hash) => {
@@ -80,59 +106,112 @@ const createUser = (req, res, next) => {
 
               const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user) VALUES ('${nama}', '${username}', '${hash}', '${email}', 'KRY', 'aktif')`;
               db.query(sql, (err, result) => {
-                if (err) return errorResponse(500, err.message, res);
-                next();
+                if (err)
+                  return errorResponse(
+                    500,
+                    err.message,
+                    "Internal server error",
+                    res
+                  );
+                db.query(
+                  `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${result.insertId}', '${data.id_user}', 'Menambah user baru')`,
+                  (err, result) => {
+                    if (err)
+                      return errorResponse(
+                        500,
+                        err.message,
+                        "Internal server error",
+                        res
+                      );
+                    next();
+                  }
+                );
               });
             });
           }
         );
       }
     );
-  }
-
-  if (data.role == "Superadmin") {
-    const { nama, username, password, email, role } = req.body;
+  } else if (data.role == "Superadmin") {
+    const { nama, username, password, email } = req.body;
+    let role = req.body.role;
 
     db.query(
       `SELECT username FROM users WHERE username = '${username}'`,
       (err, result) => {
-        if (err) return errorResponse(500, "Internal server error", res);
+        if (err)
+          return errorResponse(500, err.message, "Internal server error", res);
 
-        if (result[0] != undefined) {
-          return errorResponse(400, "Username already exist", res);
+        if (result[0] !== undefined) {
+          return errorResponse(
+            400,
+            "Username already exist",
+            "Bad request",
+            res
+          );
         }
 
         db.query(
           `SELECT email FROM users WHERE email = '${email}'`,
           (err, result) => {
-            if (err) return errorResponse(500, "Internal server error", res);
-
-            if (result[0] != undefined) {
-              return errorResponse(400, "Email already exist");
+            if (err) {
+              return errorResponse(
+                500,
+                err.message,
+                "Internal server error",
+                res
+              );
             }
 
-            if (nama == [] || !nama) {
-              return errorResponse(400, "Nama is required", res);
+            if (result[0] !== undefined) {
+              return errorResponse(
+                400,
+                "Email already exist",
+                "Bad request",
+                res
+              );
             }
 
-            if (role == [] || !role) {
-              return errorResponse(400, "Role is required", res);
-            }
-
-            if (email == [] || !email) {
-              return errorResponse(400, "Email is required", res);
+            if (nama === undefined) {
+              return errorResponse(400, "Nama is required", "Bad request", res);
+            }else if (role === undefined) {
+              return errorResponse(400, "Role is required", "Bad request", res);
+            }else if (email === undefined) {
+              return errorResponse(
+                400,
+                "Email is required",
+                "Bad request",
+                res
+              );
             }
 
             const str = role.toUpperCase();
 
-            if (str == "SU") {
-              return errorResponse(400, "Akun superadmin sudah ada", res);
+            if (str == "SUPERADMIN" || str == "SU") {
+              return errorResponse(
+                400,
+                "Cannot create Superadmin account",
+                "Bad request",
+                res
+              );
+            } else if (str == "SUPERVISOR" || str == "SPV") {
+              role = "SPV";
+            } else if (str == "KARYAWAN" || str == "KRY") {
+              role = "KRY";
+            } else {
+              return errorResponse(
+                400,
+                "Role not available",
+                "Bad request",
+                res
+              );
             }
 
             if (username.length < 12) {
               return errorResponse(
                 400,
-                "Username harus berjumlah minimal 12 karakter",
+                "Username must have 12 character or more",
+                "Bad request",
                 res
               );
             }
@@ -140,7 +219,8 @@ const createUser = (req, res, next) => {
             if (!/\d/.test(password)) {
               return errorResponse(
                 400,
-                "Password harus terdiri dari huruf dan angka",
+                "Password must contains alphanumeric",
+                "Bad request",
                 res
               );
             }
@@ -148,22 +228,47 @@ const createUser = (req, res, next) => {
             if (password.length < 12) {
               return errorResponse(
                 400,
-                "Password harus berjumlah minimal 12 karakter",
+                "Password must have 12 character or more",
+                "Bad request",
                 res
               );
             }
 
             if (!isEmail(email)) {
-              return errorResponse(400, "Invalid email", res);
+              return errorResponse(400, "Invalid email", "Bad request", res);
             }
 
             bcrypt.hash(password, 12, (err, hash) => {
-              if (err) return errorResponse(500, err.message, res);
+              if (err)
+                return errorResponse(
+                  500,
+                  err.message,
+                  "Internal server error",
+                  res
+                );
 
-              const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user) VALUES ('${nama}', '${username}', '${hash}', '${email}', '${role}', 'aktif',)`;
+              const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user) VALUES ('${nama}', '${username}', '${hash}', '${email}', '${role}', 'aktif')`;
               db.query(sql, (err, result) => {
-                if (err) return errorResponse(500, err.message, res);
-                next();
+                if (err)
+                  return errorResponse(
+                    500,
+                    err.message,
+                    "Internal server error",
+                    res
+                  );
+                db.query(
+                  `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${result.insertId}', '${data.id_user}', 'Menambah user baru')`,
+                  (err, result) => {
+                    if (err)
+                      return errorResponse(
+                        500,
+                        err.message,
+                        "Internal server error",
+                        res
+                      );
+                    next();
+                  }
+                );
               });
             });
           }

@@ -6,7 +6,7 @@ const logoutMiddleware = (req, res, next) => {
   db.query(
     `DELETE FROM token_akses WHERE token = '${token}'`,
     (err, result) => {
-      if (err) throw errorResponse(500, "Internal server error 3", res);
+      if (err) throw errorResponse(500, "Internal server error", res);
       next();
     }
   );

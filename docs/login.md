@@ -4,6 +4,8 @@
 
 ### Method : POST
 
+### Deskripsi : API ini digunakan untuk melakukan login sebagai salah satu otorisasi yang diperlukan untuk mengakses API ini
+
 ### Request body :
 
 ```json
@@ -26,6 +28,8 @@
 ```json
 {
   "message": "Invalid username or password", // 400
+  "message": "Status akun sudah nonaktif", // 400
+  "message": "Logout terlebih dahulu", // 400
   "message": "Internal server error" // 500
 }
 ```

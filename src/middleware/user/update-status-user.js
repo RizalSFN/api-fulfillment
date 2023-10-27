@@ -5,10 +5,10 @@ const updateStatus = (req, res, next) => {
   if (req.query.stat == "nonaktif") {
     const data = req.tokenDecode;
 
-    if (!data) return errorResponse(403, "Invalid token", res);
+    if (!data) return errorResponse(401, "Invalid token", "Unauthorized", res);
 
     if (data.role == "Karyawan") {
-      return errorResponse(403, "Akses ditolak", res);
+      return errorResponse(403, "Akses ditolak", "Forbidden", res);
     }
 
     if (data.role == "Supervisor") {
@@ -17,7 +17,7 @@ const updateStatus = (req, res, next) => {
         if (err) return errorResponse(500, err.message, res);
 
         if (result.affectedRows == 0) {
-          return errorResponse(403, "Tidak bisa menonaktifkan user", res);
+          return errorResponse(400, "Tidak bisa menonaktifkan user", "Bad request", res);
         }
 
         next();
@@ -27,10 +27,10 @@ const updateStatus = (req, res, next) => {
     if (data.role == "Superadmin") {
       const sql = `UPDATE users SET status_user = ? WHERE id = ? AND id_role != 'SU'`;
       db.query(sql, [req.query.stat, req.query.id], (err, result) => {
-        if (err) return errorResponse(500, "Internal server error", res);
+        if (err) return errorResponse(500, err.message, "Internal server error", res);
 
         if (result.affectedRows == 0) {
-          return errorResponse(403, "Tidak bisa menonaktifkan user", res);
+          return errorResponse(400, "Tidak bisa menonaktifkan user", "Bad request", res);
         }
         next();
       });
@@ -40,18 +40,18 @@ const updateStatus = (req, res, next) => {
   if (req.query.stat == "aktif") {
     const data = req.tokenDecode;
 
-    if (!data) return errorResponse(403, "Invalid token", res);
+    if (!data) return errorResponse(401, "Invalid token", "Unauthorized", res);
 
     if (data.role == "Karyawan")
-      return errorResponse(403, "Akses ditolak", res);
+      return errorResponse(403, "Akses ditolak", "Forbidden", res);
 
     if (data.role == "Supervisor") {
       const sql = `UPDATE users SET status_user = ? WHERE id = ? AND id_role = 'KRY'`;
       db.query(sql, [req.query.stat, req.query.id], (err, result) => {
-        if (err) return errorResponse(500, "Internal server error", res);
+        if (err) return errorResponse(500, err.message, "Internal server error", res);
 
         if (result.affectedRows == 0) {
-          return errorResponse(403, "Tidak bisa mengaktifkan user", res);
+          return errorResponse(400, "Tidak bisa mengaktifkan user", "Bad request", res);
         }
 
         next();
@@ -61,10 +61,10 @@ const updateStatus = (req, res, next) => {
     if (data.role == "Superadmin") {
       const sql = `UPDATE users SET status_user = ? WHERE ? && id_role != 'SU'`;
       db.query(sql, [req.query.stat, req.query.id], (err, result) => {
-        if (err) return errorResponse(500, "Internal server error", res);
+        if (err) return errorResponse(500, err.message, "Internal server error", res);
 
         if (result.affectedRows == 0) {
-          return errorResponse(403, "Tidak bisa mengaktifkan user", res);
+          return errorResponse(400, "Tidak bisa mengaktifkan user", "Bad request", res);
         }
         next();
       });

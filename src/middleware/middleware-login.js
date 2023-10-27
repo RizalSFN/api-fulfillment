@@ -12,24 +12,24 @@ app.use(express.json());
 const loginMiddleware = (req, res, next) => {
   const sql = `SELECT users.id, users.nama, users.password, role_users.role, users.status_user FROM users INNER JOIN role_users ON users.id_role = role_users.id WHERE username = ?`;
   db.query(sql, [req.body.username], (err, result) => {
-    if (err) return errorResponse(404, err.message, res);
+    if (err) return errorResponse(500, err.message, "Internal server error", res);
     const user = result[0];
 
-    if (user == undefined) {
-      return errorResponse(400, "Invalid username or password", res);
+    if (user === undefined) {
+      return errorResponse(400, "Invalid username or password", "Bad request", res);
     }
 
     bcrypt.compare(req.body.password, user.password, (err, result) => {
       if (err) {
-        return errorResponse(500, "Internal server error", res);
+        return errorResponse(500, err.message, "Internal server error", res);
       }
 
-      if (!result) {
-        return errorResponse(400, "Invalid username or password", res);
+      if (!result || result === undefined) {
+        return errorResponse(400, "Invalid username or password", "Bad request", res);
       }
 
       if (user.status_user != "aktif") {
-        return errorResponse(400, "Status akun sudah nonaktif", res);
+        return errorResponse(400, "Status akun sudah nonaktif", "Bad request", res);
       }
 
       const data = {
@@ -43,13 +43,13 @@ const loginMiddleware = (req, res, next) => {
         expiresIn: "1d",
       });
 
-      const time = Date.now() / 1000 + 3600;
+      const time = Date.now() / 1000 + 86400;
 
       db.query(
         `SELECT * FROM token_akses WHERE id_user = ?`,
         [user.id],
         (err, result) => {
-          if (err) return errorResponse(500, "Internal server error", res);
+          if (err) return errorResponse(500, err.message, "Internal server error", res);
 
           const tokenAkses = result[0];
 
@@ -61,13 +61,13 @@ const loginMiddleware = (req, res, next) => {
                 [user.id],
                 (err, result) => {
                   if (err) {
-                    return errorResponse(500, "Internal server error", res);
+                    return errorResponse(500, err.message, "Internal server error", res);
                   }
 
                   const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${time}')`;
                   db.query(queri, (err, result) => {
                     if (err)
-                      return errorResponse(500, "Internal server error", res);
+                      return errorResponse(500, err.message, "Internal server error", res);
                     req.user = user;
                     req.token = token;
                     return next();
@@ -78,7 +78,10 @@ const loginMiddleware = (req, res, next) => {
           } else {
             const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${time}')`;
             db.query(queri, (err, result) => {
-              if (err) return errorResponse(500, "Internal server error", res);
+              if (err) return errorResponse(500, err.message, "Internal server error", res);
+
+              // TODO BESOK : membuat sebuah logger untuk login (dengan menginsert ke tabel history)
+              
               req.user = user;
               req.token = token;
               return next();
@@ -87,7 +90,7 @@ const loginMiddleware = (req, res, next) => {
 
           const timeNow = Date.now() / 1000;
           if (tokenAkses && tokenAkses.expire_token > timeNow) {
-            return errorResponse(400, "Logout terlebih dahulu", res);
+            return errorResponse(400, "Logout terlebih dahulu", "Bad request", res);
           }
         }
       );

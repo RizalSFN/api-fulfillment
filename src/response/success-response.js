@@ -1,12 +1,11 @@
-const successResponse = (statusCode, data, msg, res) => {
+const successResponse = (statusCode, data, msg, stat, res) => {
   res.status(statusCode).json([
     {
       message: msg,
       payload: data,
-      metadata: {
-        prev: "",
-        next: "",
-        current: "",
+      status_code: {
+        code: statusCode,
+        status: stat,
       },
     },
   ]);

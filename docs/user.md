@@ -103,10 +103,19 @@
 
 ```json
 {
-  "message": "Unauthorized", // 401
-  "message": "email sudah terdaftar", // 400
-  "message": "username sudah terdaftar", // 400
-  "message": "Akses ditolak", // 403
+  "message": "Invalid token", // 401
+  "message": "Unaccess", // 403
+  "message": "Cannot add role", // 400
+  "message": "email already exist", // 400
+  "message": "username already exist", // 400
+  "message": "Nama is required", // 400
+  "message": "Email is required", // 400
+  "message": "Role is required", // 400
+  "message": "username must have 12 character or more", // 400
+  "message": "Password must have contains alphanumeric", // 400
+  "message": "Password must have 12 character or more", // 400
+  "message": "Invalid email", // 400
+  "message": "Cannot create Superadmin account", // 400
   "message": "Internal server error" // 500
 }
 ```
