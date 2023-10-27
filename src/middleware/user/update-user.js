@@ -12,13 +12,8 @@ const updateUser = (req, res, next) => {
 
   if (!data) return errorResponse(401, "Invalid token", "Unauthorized", res);
 
-  if (data.role == "Karyawan")
+  if (data.role == "Karyawan") {
     return errorResponse(403, "Access denied", "Forbidden", res);
-
-  if (req.body.email !== undefined) {
-    if (!isEmail(req.body.email)) {
-      return errorResponse(400, "Invalid email", "Bad request", res);
-    }
   }
 
   const myDate = new Date();
@@ -28,13 +23,23 @@ const updateUser = (req, res, next) => {
   const tahun = myDate.getFullYear();
   const dateFormat = `${tahun}-${bulan + 1}-${tanggal} ${waktu}`;
 
+  if (req.body.email !== undefined) {
+    if (!isEmail(req.body.email)) {
+      return errorResponse(400, "Invalid email", "Bad request", res);
+    }
+  }
+
+  if (req.body.password !== undefined) {
+    return errorResponse(400, "Cannot update password", "Bad request", res);
+  }
+
   db.query(
     `SELECT username FROM users WHERE username = '${req.body.username}' AND id != '${idUser}'`,
     (err, result) => {
       if (err)
         return errorResponse(500, err.message, "Internal server error", res);
 
-      if (result[0] != undefined) {
+      if (result[0] !== undefined) {
         return errorResponse(400, "Username already exist", "Bad request", res);
       }
 
@@ -49,7 +54,7 @@ const updateUser = (req, res, next) => {
               res
             );
 
-          if (result[0] != undefined) {
+          if (result[0] !== undefined) {
             return errorResponse(
               400,
               "Email already exist",
@@ -58,19 +63,23 @@ const updateUser = (req, res, next) => {
             );
           }
 
-          const str = req.body.id_role.toUpperCase();
-          if (str === "KARYAWAN" || str === "KRY") {
-            req.body.id_role = "KRY";
-          } else if (str === "SUPERVISOR" || str === "SPV") {
-            req.body.id_role = "SPV";
-          } else {
-            return errorResponse(
-              400,
-              "Role not available",
-              "Bad request",
-              res
-            );
+          if (req.body.id_role !== undefined) {
+            const str = req.body.id_role.toUpperCase();
+            if (str === "KARYAWAN" || str === "KRY") {
+              req.body.id_role = "KRY";
+            } else if (str === "SUPERVISOR" || str === "SPV") {
+              req.body.id_role = "SPV";
+            } else {
+              return errorResponse(
+                400,
+                "Role not available",
+                "Bad request",
+                res
+              );
+            }
           }
+
+          const data_log = Object.keys(req.body);
 
           if (data.role == "Supervisor") {
             if (req.body.id_role) {
@@ -81,8 +90,8 @@ const updateUser = (req, res, next) => {
                 res
               );
             }
-            const sql = `UPDATE users SET ?, updated_at = '${dateFormat}' WHERE id = ? AND id_role = 'KRY'`;
-            db.query(sql, [req.body, idUser], (err, result) => {
+            const sql = `UPDATE users SET ?, updated_at = ? WHERE id = ? AND id_role = 'KRY'`;
+            db.query(sql, [req.body, dateFormat, idUser], (err, result) => {
               if (err)
                 return errorResponse(
                   500,
@@ -90,7 +99,7 @@ const updateUser = (req, res, next) => {
                   "Internal server error",
                   res
                 );
-              if (result.affectedRows == 0) {
+              if (result.affectedRows === 0) {
                 return errorResponse(
                   400,
                   "Cannot update user",
@@ -98,13 +107,19 @@ const updateUser = (req, res, next) => {
                   res
                 );
               }
-              next();
+
+              db.query(
+                `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`, (err, result) => {
+                  if (err) return errorResponse(500, err.message, "Internal server error", res)
+                  next();
+                }
+              );
             });
           }
 
           if (data.role == "Superadmin") {
-            const sql = `UPDATE users SET updated_at = ?, ? WHERE id = ? AND id_role != 'SU'`;
-            db.query(sql, [dateFormat, req.body, idUser], (err, result) => {
+            const sql = `UPDATE users SET ?, updated_at = ? WHERE id = ? AND id_role != 'SU'`;
+            db.query(sql, [req.body, dateFormat, idUser], (err, result) => {
               if (err)
                 return errorResponse(
                   500,
@@ -112,7 +127,7 @@ const updateUser = (req, res, next) => {
                   "Internal server error",
                   res
                 );
-              if (result.affectedRows == 0) {
+              if (result.affectedRows === 0) {
                 return errorResponse(
                   400,
                   "Cannot update user",
@@ -120,7 +135,11 @@ const updateUser = (req, res, next) => {
                   res
                 );
               }
-              next();
+
+              db.query(`INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`, (err, result) => {
+                if (err) return errorResponse(500, err.message, "Internal server error", res)
+                next();
+              })
             });
           }
         }

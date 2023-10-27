@@ -19,9 +19,7 @@ const detailUser = (req, res, next) => {
 
     if (err) return errorResponse(500, err.message, "Internal server error", res);
 
-    if (!result) return errorResponse(404, "Data tidak ditemukan", "Not found", res);
-
-    if (result[0] == undefined) return errorResponse(404, "Data tidak ditemukan", "Not found", res);
+    if (result[0] === undefined) return errorResponse(404, "Data tidak ditemukan", "Not found", res);
 
     req.userDetail = result;
     next();
