@@ -7,6 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
+    "build": "browserify src/app.js -o dist/bundle.js && minify dist/bundle.js -o dist/bundle.min.js",
     "api": "nodemon src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,6 +23,7 @@
     "validator": "^13.11.0"
   },
   "devDependencies": {
+    "browserify": "^17.0.0",
     "dotenv": "^16.3.1",
     "nodemon": "^3.0.1"
   }
