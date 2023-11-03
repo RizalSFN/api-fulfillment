@@ -12,24 +12,24 @@ app.use(express.json());
 const loginMiddleware = (req, res, next) => {
   const sql = `SELECT users.id, users.nama, users.password, role_users.role, users.status_user FROM users INNER JOIN role_users ON users.id_role = role_users.id WHERE username = ?`;
   db.query(sql, [req.body.username], (err, result) => {
-    if (err) return errorResponse(500, err.message, "Internal server error", res);
+    if (err) return errorResponse(500, err.message, res);
     const user = result[0];
 
     if (user === undefined) {
-      return errorResponse(400, "Invalid username or password", "Bad request", res);
+      return errorResponse(400, "Invalid username or password", res);
     }
 
     bcrypt.compare(req.body.password, user.password, (err, result) => {
       if (err) {
-        return errorResponse(500, err.message, "Internal server error", res);
+        return errorResponse(500, err.message, res);
       }
 
       if (!result || result === undefined) {
-        return errorResponse(400, "Invalid username or password", "Bad request", res);
+        return errorResponse(400, "Invalid username or password", res);
       }
 
-      if (user.status_user != "aktif") {
-        return errorResponse(400, "Status akun sudah nonaktif", "Bad request", res);
+      if (user.status_user !== "aktif") {
+        return errorResponse(400, "The account isn't active", res);
       }
 
       const data = {
@@ -49,48 +49,64 @@ const loginMiddleware = (req, res, next) => {
         `SELECT * FROM token_akses WHERE id_user = ?`,
         [user.id],
         (err, result) => {
-          if (err) return errorResponse(500, err.message, "Internal server error", res);
+          if (err) return errorResponse(500, err.message, res);
 
           const tokenAkses = result[0];
+          const nowTime = Date.now() / 1000;
 
           if (tokenAkses !== undefined) {
             const expire = tokenAkses.expire_token;
-            if (expire < Date.now() / 1000) {
+            if (expire < nowTime) {
               db.query(
                 `DELETE FROM token_akses WHERE id_user = ?`,
                 [user.id],
                 (err, result) => {
                   if (err) {
-                    return errorResponse(500, err.message, "Internal server error", res);
+                    return errorResponse(500, err.message, res);
                   }
 
                   const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${time}')`;
                   db.query(queri, (err, result) => {
-                    if (err)
-                      return errorResponse(500, err.message, "Internal server error", res);
-                    req.user = user;
-                    req.token = token;
-                    return next();
+                    if (err) {
+                      return errorResponse(500, err.message, res);
+                    }
+
+                    db.query(
+                      `INSERT INTO history_users (id_user_aksi, keterangan_aksi) VALUES ('${user.id}', 'Melakukan login ulang setelah token expire')`,
+                      (err, result) => {
+                        if (err) return errorResponse(500, err.message, res);
+
+                        req.user = user;
+                        req.token = token;
+                        return next();
+                      }
+                    );
                   });
                 }
               );
+            } else {
+              return errorResponse(403, "Logout terlebih dahulu", res);
             }
           } else {
             const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${time}')`;
             db.query(queri, (err, result) => {
-              if (err) return errorResponse(500, err.message, "Internal server error", res);
+              if (err) return errorResponse(500, err.message, res);
 
-              // TODO BESOK : membuat sebuah logger untuk login (dengan menginsert ke tabel history)
-              
-              req.user = user;
-              req.token = token;
-              return next();
+              db.query(
+                `INSERT INTO history_users (id_user_aksi, keterangan_aksi) VALUES ('${user.id}', 'Melakukan login')`,
+                (err, result) => {
+                  if (err) return errorResponse(500, err.message, res);
+
+                  req.user = user;
+                  req.token = token;
+                  return next();
+                }
+              );
             });
           }
 
-          const timeNow = Date.now() / 1000;
-          if (tokenAkses && tokenAkses.expire_token > timeNow) {
-            return errorResponse(400, "Logout terlebih dahulu", "Bad request", res);
+          if (tokenAkses && tokenAkses.expire_token > nowTime) {
+            return errorResponse(403, "Logout terlebih dahulu", res);
           }
         }
       );

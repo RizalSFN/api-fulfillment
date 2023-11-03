@@ -8,21 +8,21 @@ const verifyToken = (req, res, next) => {
   const token = req.cookies.TokenJWT;
 
   if (!token) {
-    return errorResponse(401, "Invalid token", "Unauthorized", res);
+    return errorResponse(401, "Invalid token", res);
   }
 
   db.query(
     `SELECT * FROM token_akses WHERE token = '${token}'`,
     (err, result) => {
-      if (err) return errorResponse(500, "Internal server error", res);
+      if (err) return errorResponse(500, err.message, res);
 
       jwt.verify(token, secret_key, (err, result) => {
         if (err) {
-          if (err.message == "jwt expired") {
+          if (err.message === "jwt expired") {
             db.query(
               `DELETE FROM token_akses WHERE token = '${token}'`,
               (err, result) => {
-                if (err) return err.message;
+                if (err) return errorResponse(500, err.message, res);
               }
             );
           }

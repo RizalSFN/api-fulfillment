@@ -12,10 +12,14 @@ const updateStatus = (req, res, next) => {
   if (req.query.stat === "nonaktif") {
     const data = req.tokenDecode;
 
-    if (!data) return errorResponse(401, "Invalid token", "Unauthorized", res);
+    if (!data) return errorResponse(401, "Invalid token", res);
+
+    if (!req.query.id || req.query.id === undefined){
+      return errorResponse(400, "Invalid params", res)
+    }
 
     if (data.role === "Karyawan") {
-      return errorResponse(403, "Access denied", "Forbidden", res);
+      return errorResponse(403, "Access denied", res);
     }
 
     if (data.role === "Supervisor") {
@@ -30,7 +34,6 @@ const updateStatus = (req, res, next) => {
             return errorResponse(
               400,
               "Cannot deactivate user",
-              "Bad request",
               res
             );
           }
@@ -42,7 +45,6 @@ const updateStatus = (req, res, next) => {
                 return errorResponse(
                   500,
                   err.message,
-                  "Internal server error",
                   res
                 );
               next();
@@ -60,7 +62,6 @@ const updateStatus = (req, res, next) => {
             return errorResponse(
               500,
               err.message,
-              "Internal server error",
               res
             );
 
@@ -68,7 +69,6 @@ const updateStatus = (req, res, next) => {
             return errorResponse(
               400,
               "Cannot deactivate user",
-              "Bad request",
               res
             );
           }
@@ -80,7 +80,6 @@ const updateStatus = (req, res, next) => {
                 return errorResponse(
                   500,
                   err.message,
-                  "Internal server error",
                   res
                 );
               next();
@@ -92,10 +91,14 @@ const updateStatus = (req, res, next) => {
   } else if (req.query.stat === "aktif") {
     const data = req.tokenDecode;
 
-    if (!data) return errorResponse(401, "Invalid token", "Unauthorized", res);
+    if (!data) return errorResponse(401, "Invalid token", res);
+
+    if (!req.query.id || req.query.id === undefined){
+      return errorResponse(400, "Invalid params", res)
+    }
 
     if (data.role === "Karyawan")
-      return errorResponse(403, "Access denied", "Forbidden", res);
+      return errorResponse(403, "Access denied", res);
 
     if (data.role === "Supervisor") {
       const sql = `UPDATE users SET status_user = ?, updated_at = ? WHERE id = ? AND id_role = 'KRY'`;
@@ -107,7 +110,6 @@ const updateStatus = (req, res, next) => {
             return errorResponse(
               500,
               err.message,
-              "Internal server error",
               res
             );
 
@@ -115,7 +117,6 @@ const updateStatus = (req, res, next) => {
             return errorResponse(
               400,
               "Cannot activate user",
-              "Bad request",
               res
             );
           }
@@ -127,7 +128,6 @@ const updateStatus = (req, res, next) => {
                 return errorResponse(
                   500,
                   err.message,
-                  "Internal server error",
                   res
                 );
               next();
@@ -147,7 +147,6 @@ const updateStatus = (req, res, next) => {
             return errorResponse(
               500,
               err.message,
-              "Internal server error",
               res
             );
 
@@ -155,7 +154,6 @@ const updateStatus = (req, res, next) => {
             return errorResponse(
               400,
               "Cannot activate user",
-              "Bad request",
               res
             );
           }
@@ -167,7 +165,6 @@ const updateStatus = (req, res, next) => {
                 return errorResponse(
                   500,
                   err.message,
-                  "Internal server error",
                   res
                 );
               next();
@@ -176,6 +173,8 @@ const updateStatus = (req, res, next) => {
         }
       );
     }
+  } else {
+    return errorResponse(400, "Invalid params", res)
   }
 };
 

@@ -10,10 +10,10 @@ const updateUser = (req, res, next) => {
   const data = req.tokenDecode;
   const idUser = req.params.id;
 
-  if (!data) return errorResponse(401, "Invalid token", "Unauthorized", res);
+  if (!data) return errorResponse(401, "Invalid token", res);
 
-  if (data.role == "Karyawan") {
-    return errorResponse(403, "Access denied", "Forbidden", res);
+  if (data.role === "Karyawan") {
+    return errorResponse(403, "Access denied", res);
   }
 
   const myDate = new Date();
@@ -25,42 +25,30 @@ const updateUser = (req, res, next) => {
 
   if (req.body.email !== undefined) {
     if (!isEmail(req.body.email)) {
-      return errorResponse(400, "Invalid email", "Bad request", res);
+      return errorResponse(400, "Invalid email", res);
     }
   }
 
   if (req.body.password !== undefined) {
-    return errorResponse(400, "Cannot update password", "Bad request", res);
+    return errorResponse(400, "Cannot update password", res);
   }
 
   db.query(
     `SELECT username FROM users WHERE username = '${req.body.username}' AND id != '${idUser}'`,
     (err, result) => {
-      if (err)
-        return errorResponse(500, err.message, "Internal server error", res);
+      if (err) return errorResponse(500, err.message, res);
 
       if (result[0] !== undefined) {
-        return errorResponse(400, "Username already exist", "Bad request", res);
+        return errorResponse(400, "Username already exist", res);
       }
 
       db.query(
         `SELECT email FROM users WHERE email = '${req.body.username}' AND id != '${idUser}'`,
         (err, result) => {
-          if (err)
-            return errorResponse(
-              500,
-              err.message,
-              "Internal server error",
-              res
-            );
+          if (err) return errorResponse(500, err.message, res);
 
           if (result[0] !== undefined) {
-            return errorResponse(
-              400,
-              "Email already exist",
-              "Bad request",
-              res
-            );
+            return errorResponse(400, "Email already exist", res);
           }
 
           if (req.body.id_role !== undefined) {
@@ -70,76 +58,48 @@ const updateUser = (req, res, next) => {
             } else if (str === "SUPERVISOR" || str === "SPV") {
               req.body.id_role = "SPV";
             } else {
-              return errorResponse(
-                400,
-                "Role not available",
-                "Bad request",
-                res
-              );
+              return errorResponse(400, "Role not available", res);
             }
           }
 
           const data_log = Object.keys(req.body);
 
-          if (data.role == "Supervisor") {
+          if (data.role === "Supervisor") {
             if (req.body.id_role) {
-              return errorResponse(
-                400,
-                "Cannot update role",
-                "Bad request",
-                res
-              );
+              return errorResponse(400, "Cannot update role", res);
             }
             const sql = `UPDATE users SET ?, updated_at = ? WHERE id = ? AND id_role = 'KRY'`;
             db.query(sql, [req.body, dateFormat, idUser], (err, result) => {
-              if (err)
-                return errorResponse(
-                  500,
-                  err.message,
-                  "Internal server error",
-                  res
-                );
+              if (err) return errorResponse(500, err.message, res);
               if (result.affectedRows === 0) {
-                return errorResponse(
-                  400,
-                  "Cannot update user",
-                  "Bad request",
-                  res
-                );
+                return errorResponse(400, "Cannot update user", res);
               }
 
               db.query(
-                `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`, (err, result) => {
-                  if (err) return errorResponse(500, err.message, "Internal server error", res)
+                `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`,
+                (err, result) => {
+                  if (err) return errorResponse(500, err.message, res);
                   next();
                 }
               );
             });
           }
 
-          if (data.role == "Superadmin") {
+          if (data.role === "Superadmin") {
             const sql = `UPDATE users SET ?, updated_at = ? WHERE id = ? AND id_role != 'SU'`;
             db.query(sql, [req.body, dateFormat, idUser], (err, result) => {
-              if (err)
-                return errorResponse(
-                  500,
-                  err.message,
-                  "Internal server error",
-                  res
-                );
+              if (err) return errorResponse(500, err.message, res);
               if (result.affectedRows === 0) {
-                return errorResponse(
-                  400,
-                  "Cannot update user",
-                  "Bad request",
-                  res
-                );
+                return errorResponse(400, "Cannot update user", res);
               }
 
-              db.query(`INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`, (err, result) => {
-                if (err) return errorResponse(500, err.message, "Internal server error", res)
-                next();
-              })
+              db.query(
+                `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`,
+                (err, result) => {
+                  if (err) return errorResponse(500, err.message, res);
+                  next();
+                }
+              );
             });
           }
         }

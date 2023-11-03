@@ -11,28 +11,27 @@ const createUser = (req, res, next) => {
   const data = req.tokenDecode;
 
   if (!data) {
-    return errorResponse(401, "Invalid token", "Unauthorized", res);
+    return errorResponse(401, "Invalid token", res);
   }
 
   if (data.role == "Karyawan") {
-    return errorResponse(403, "Access denied", "Forbidden", res);
+    return errorResponse(403, "Access denied", res);
   } else if (data.role == "Supervisor") {
     const { nama, username, password, email } = req.body;
 
     if (req.body.role) {
-      return errorResponse(400, "Cannot add role", "Bad request", res);
+      return errorResponse(400, "Cannot add role", res);
     }
     db.query(
       `SELECT username FROM users WHERE username = '${username}'`,
       (err, result) => {
         if (err)
-          return errorResponse(500, err.message, "Internal server error", res);
+          return errorResponse(500, err.message, res);
 
         if (result[0] != undefined) {
           return errorResponse(
             400,
             "Username already exist",
-            "Bad request",
             res
           );
         }
@@ -44,7 +43,6 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 500,
                 err.message,
-                "Internal server error",
                 res
               );
 
@@ -52,20 +50,18 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Email already exist",
-                "Bad request",
                 res
               );
             }
 
             if (nama === undefined) {
-              return errorResponse(400, "Nama is required", "Bad request", res);
+              return errorResponse(400, "Nama is required", res);
             }
 
             if (email === undefined) {
               return errorResponse(
                 400,
                 "Email is required",
-                "Bad request",
                 res
               );
             }
@@ -74,7 +70,6 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Username must be 12 character or more",
-                "Bad request",
                 res
               );
             }
@@ -83,7 +78,6 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Password must contains alphanumeric",
-                "Bad request",
                 res
               );
             }
@@ -92,13 +86,12 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Password must be 12 character or more ",
-                "Bad request",
                 res
               );
             }
 
             if (!isEmail(email)) {
-              return errorResponse(400, "Invalid email", "Bad request", res);
+              return errorResponse(400, "Invalid email", res);
             }
 
             bcrypt.hash(password, 12, (err, hash) => {
@@ -110,7 +103,6 @@ const createUser = (req, res, next) => {
                   return errorResponse(
                     500,
                     err.message,
-                    "Internal server error",
                     res
                   );
                 db.query(
@@ -120,7 +112,6 @@ const createUser = (req, res, next) => {
                       return errorResponse(
                         500,
                         err.message,
-                        "Internal server error",
                         res
                       );
                     next();
@@ -140,13 +131,12 @@ const createUser = (req, res, next) => {
       `SELECT username FROM users WHERE username = '${username}'`,
       (err, result) => {
         if (err)
-          return errorResponse(500, err.message, "Internal server error", res);
+          return errorResponse(500, err.message, res);
 
         if (result[0] !== undefined) {
           return errorResponse(
             400,
             "Username already exist",
-            "Bad request",
             res
           );
         }
@@ -158,7 +148,6 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 500,
                 err.message,
-                "Internal server error",
                 res
               );
             }
@@ -167,20 +156,18 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Email already exist",
-                "Bad request",
                 res
               );
             }
 
             if (nama === undefined) {
-              return errorResponse(400, "Nama is required", "Bad request", res);
+              return errorResponse(400, "Nama is required", res);
             }else if (role === undefined) {
-              return errorResponse(400, "Role is required", "Bad request", res);
+              return errorResponse(400, "Role is required", res);
             }else if (email === undefined) {
               return errorResponse(
                 400,
                 "Email is required",
-                "Bad request",
                 res
               );
             }
@@ -191,7 +178,6 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Cannot create Superadmin account",
-                "Bad request",
                 res
               );
             } else if (str == "SUPERVISOR" || str == "SPV") {
@@ -202,7 +188,6 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Role not available",
-                "Bad request",
                 res
               );
             }
@@ -211,7 +196,6 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Username must have 12 character or more",
-                "Bad request",
                 res
               );
             }
@@ -220,7 +204,6 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Password must contains alphanumeric",
-                "Bad request",
                 res
               );
             }
@@ -229,13 +212,12 @@ const createUser = (req, res, next) => {
               return errorResponse(
                 400,
                 "Password must have 12 character or more",
-                "Bad request",
                 res
               );
             }
 
             if (!isEmail(email)) {
-              return errorResponse(400, "Invalid email", "Bad request", res);
+              return errorResponse(400, "Invalid email", res);
             }
 
             bcrypt.hash(password, 12, (err, hash) => {
@@ -243,7 +225,6 @@ const createUser = (req, res, next) => {
                 return errorResponse(
                   500,
                   err.message,
-                  "Internal server error",
                   res
                 );
 
@@ -253,7 +234,6 @@ const createUser = (req, res, next) => {
                   return errorResponse(
                     500,
                     err.message,
-                    "Internal server error",
                     res
                   );
                 db.query(
@@ -263,7 +243,6 @@ const createUser = (req, res, next) => {
                       return errorResponse(
                         500,
                         err.message,
-                        "Internal server error",
                         res
                       );
                     next();
