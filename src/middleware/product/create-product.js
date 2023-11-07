@@ -43,7 +43,7 @@ const createProduct = (req, res, next) => {
             if (err) return errorResponse(500, err.message, res);
 
             db.query(
-              `INSERT INTO log_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${result.insertId}', '${data.id_user}', 'Menambah barang baru')`,
+              `INSERT INTO history_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${result.insertId}', '${data.id_user}', 'Menambah barang baru')`,
               (err, result) => {
                 if (err) return errorResponse(500, err.message, res);
                 next();

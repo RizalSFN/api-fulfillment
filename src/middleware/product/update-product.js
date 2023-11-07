@@ -20,12 +20,12 @@ const updateProduct = (req, res, next) => {
   const dateFormat = `${tahun}-${bulan + 1}-${tanggal} ${waktu}`;
 
   if (req.body.sku || req.body.sku !== undefined) {
-    return errorResponse(400, "Cannot update sku", res)
+    return errorResponse(400, "Cannot update sku", res);
   }
 
   if (req.body.id_user || req.body.id_user !== undefined) {
-    return errorResponse(400, "Cannot update user creator", res)
-  } 
+    return errorResponse(400, "Cannot update user creator", res);
+  }
 
   const sql = `UPDATE barang SET ?, updated_at = ? WHERE id = ?`;
   db.query(sql, [req.body, dateFormat, idProduct], (err, result) => {
@@ -35,7 +35,15 @@ const updateProduct = (req, res, next) => {
       return errorResponse(400, "Invalid data", res);
     }
 
-    next();
+    const data_log = Object.keys(req.body);
+
+    db.query(
+      `INSERT INTO history_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${idProduct}', '${data.id_user}', 'Mengupdate barang bagian ${data_log}')`,
+      (err, result) => {
+        if (err) return errorResponse(500, err.message, res);
+        next();
+      }
+    );
   });
 };
 

@@ -91,7 +91,7 @@ app.patch("/product/update/:id", verifyToken, updateProduct, (req, res) => {
 });
 
 app.patch(
-  "/product/update/status/:statusVarian/:id",
+  "/product/update/varian/:stat",
   verifyToken,
   statusProduct,
   (req, res) => {
