@@ -22,18 +22,24 @@ const createVarian = (req, res, next) => {
 
         if (result[0] === undefined) {
           return errorResponse(400, "Invalid id barang", res);
-        } else if (!stok || stok === undefined) {
-          return errorResponse(400, "Stok is required", res);
-        } else if (!harga || harga === undefined) {
-          return errorResponse(400, "Harga is required", res);
+        } else if (!stok || stok === undefined || !Number.isInteger(stok)) {
+          return errorResponse(400, "Invalid stock", res);
+        } else if (!harga || harga === undefined || !Number.isInteger(stok)) {
+          return errorResponse(400, "Invalid price", res);
         } else if (!ukuran || ukuran === undefined) {
-          return errorResponse(400, "Ukuran is required", res);
+          return errorResponse(400, "Invalid size", res);
         } else {
           const sql = `INSERT INTO varian (id_barang, stok, harga, ukuran) VALUES ('${id_barang}', '${stok}', '${harga}', '${ukuran}')`;
           db.query(sql, (err, result) => {
             if (err) return errorResponse(500, err.message, res);
 
-            next();
+            db.query(
+              `INSERT INTO history_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${id_barang}', '${data.id_user}', 'Menambah varian baru')`,
+              (err, result) => {
+                if (err) return errorResponse(500, err.message, res);
+                next();
+              }
+            );
           });
         }
       }

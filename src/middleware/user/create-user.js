@@ -25,33 +25,19 @@ const createUser = (req, res, next) => {
     db.query(
       `SELECT username FROM users WHERE username = '${username}'`,
       (err, result) => {
-        if (err)
-          return errorResponse(500, err.message, res);
+        if (err) return errorResponse(500, err.message, res);
 
         if (result[0] != undefined) {
-          return errorResponse(
-            400,
-            "Username already exist",
-            res
-          );
+          return errorResponse(400, "Username already exist", res);
         }
 
         db.query(
           `SELECT email FROM users WHERE email = '${email}'`,
           (err, result) => {
-            if (err)
-              return errorResponse(
-                500,
-                err.message,
-                res
-              );
+            if (err) return errorResponse(500, err.message, res);
 
             if (result[0] !== undefined) {
-              return errorResponse(
-                400,
-                "Email already exist",
-                res
-              );
+              return errorResponse(400, "Email already exist", res);
             }
 
             if (nama === undefined) {
@@ -59,11 +45,7 @@ const createUser = (req, res, next) => {
             }
 
             if (email === undefined) {
-              return errorResponse(
-                400,
-                "Email is required",
-                res
-              );
+              return errorResponse(400, "Email is required", res);
             }
 
             if (username.length < 12) {
@@ -99,21 +81,11 @@ const createUser = (req, res, next) => {
 
               const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user) VALUES ('${nama}', '${username}', '${hash}', '${email}', 'KRY', 'aktif')`;
               db.query(sql, (err, result) => {
-                if (err)
-                  return errorResponse(
-                    500,
-                    err.message,
-                    res
-                  );
+                if (err) return errorResponse(500, err.message, res);
                 db.query(
-                  `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${result.insertId}', '${data.id_user}', 'Menambah user baru')`,
+                  `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${result.insertId}', '${data.id_user}', 'Menambah user baru')`,
                   (err, result) => {
-                    if (err)
-                      return errorResponse(
-                        500,
-                        err.message,
-                        res
-                      );
+                    if (err) return errorResponse(500, err.message, res);
                     next();
                   }
                 );
@@ -130,46 +102,29 @@ const createUser = (req, res, next) => {
     db.query(
       `SELECT username FROM users WHERE username = '${username}'`,
       (err, result) => {
-        if (err)
-          return errorResponse(500, err.message, res);
+        if (err) return errorResponse(500, err.message, res);
 
         if (result[0] !== undefined) {
-          return errorResponse(
-            400,
-            "Username already exist",
-            res
-          );
+          return errorResponse(400, "Username already exist", res);
         }
 
         db.query(
           `SELECT email FROM users WHERE email = '${email}'`,
           (err, result) => {
             if (err) {
-              return errorResponse(
-                500,
-                err.message,
-                res
-              );
+              return errorResponse(500, err.message, res);
             }
 
             if (result[0] !== undefined) {
-              return errorResponse(
-                400,
-                "Email already exist",
-                res
-              );
+              return errorResponse(400, "Email already exist", res);
             }
 
             if (nama === undefined) {
               return errorResponse(400, "Nama is required", res);
-            }else if (role === undefined) {
+            } else if (role === undefined) {
               return errorResponse(400, "Role is required", res);
-            }else if (email === undefined) {
-              return errorResponse(
-                400,
-                "Email is required",
-                res
-              );
+            } else if (email === undefined) {
+              return errorResponse(400, "Email is required", res);
             }
 
             const str = role.toUpperCase();
@@ -185,11 +140,7 @@ const createUser = (req, res, next) => {
             } else if (str == "KARYAWAN" || str == "KRY") {
               role = "KRY";
             } else {
-              return errorResponse(
-                400,
-                "Role not available",
-                res
-              );
+              return errorResponse(400, "Role not available", res);
             }
 
             if (username.length < 12) {
@@ -221,30 +172,15 @@ const createUser = (req, res, next) => {
             }
 
             bcrypt.hash(password, 12, (err, hash) => {
-              if (err)
-                return errorResponse(
-                  500,
-                  err.message,
-                  res
-                );
+              if (err) return errorResponse(500, err.message, res);
 
               const sql = `INSERT INTO users (nama, username, password, email, id_role, status_user) VALUES ('${nama}', '${username}', '${hash}', '${email}', '${role}', 'aktif')`;
               db.query(sql, (err, result) => {
-                if (err)
-                  return errorResponse(
-                    500,
-                    err.message,
-                    res
-                  );
+                if (err) return errorResponse(500, err.message, res);
                 db.query(
                   `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${result.insertId}', '${data.id_user}', 'Menambah user baru')`,
                   (err, result) => {
-                    if (err)
-                      return errorResponse(
-                        500,
-                        err.message,
-                        res
-                      );
+                    if (err) return errorResponse(500, err.message, res);
                     next();
                   }
                 );
