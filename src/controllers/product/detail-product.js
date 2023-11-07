@@ -6,7 +6,7 @@ const detailProduct = (req, res, next) => {
 
   if (!data) return errorResponse(401, "Invalid token", "Unauthorized", res);
 
-  const sql = `SELECT barang.id, barang.sku as "SKU", barang.deskripsi as "Deskripsi", barang.foto as "Foto", brand.nama_brand as "Brand", barang.varians FROM varian INNER JOIN barang ON varian.id_barang = barang.id INNER JOIN brand ON barang.id_brand = brand.id WHERE barang.id = ?`;
+  const sql = `SELECT barang.id, barang.sku as "SKU", barang.deskripsi as "Deskripsi", brand.nama_brand as "Brand", barang.varians FROM varian INNER JOIN barang ON varian.id_barang = barang.id INNER JOIN brand ON barang.id_brand = brand.id WHERE barang.id = ?`;
 
   db.query(sql, [req.params.id], (err, result) => {
     if (err) return errorResponse(500, err.message, "Internal server error", res);

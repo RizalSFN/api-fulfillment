@@ -39,7 +39,7 @@ const updateStatus = (req, res, next) => {
           }
 
           db.query(
-            `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Menonaktifkan user')`,
+            `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Menonaktifkan user')`,
             (err, result) => {
               if (err)
                 return errorResponse(
@@ -74,7 +74,7 @@ const updateStatus = (req, res, next) => {
           }
 
           db.query(
-            `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Menonaktifkan user')`,
+            `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Menonaktifkan user')`,
             (err, result) => {
               if (err)
                 return errorResponse(
@@ -122,7 +122,7 @@ const updateStatus = (req, res, next) => {
           }
 
           db.query(
-            `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Mengaktifkan user')`,
+            `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Mengaktifkan user')`,
             (err, result) => {
               if (err)
                 return errorResponse(
@@ -159,7 +159,7 @@ const updateStatus = (req, res, next) => {
           }
 
           db.query(
-            `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Mengaktifkan user')`,
+            `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Mengaktifkan user')`,
             (err, result) => {
               if (err)
                 return errorResponse(

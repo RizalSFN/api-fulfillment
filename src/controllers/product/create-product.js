@@ -10,7 +10,7 @@ const createProduct = (req, res, next) => {
 
   if (!data) return errorResponse(401, "Invalid token", res);
 
-  const { nama_barang, sku, deskripsi, foto, brand } = req.body;
+  const { nama_barang, sku, deskripsi, brand } = req.body;
 
   db.query(`SELECT sku FROM barang WHERE sku = '${sku}'`, (err, result) => {
     if (err) return errorResponse(500, err.message, res);
@@ -38,7 +38,7 @@ const createProduct = (req, res, next) => {
         if (err) return errorResponse(500, err.message, res);
 
         if (result[0] !== undefined) {
-          const sql = `INSERT INTO barang (nama_barang, sku, deskripsi, foto, id_brand, id_user) VALUES ('${nama_barang}', '${sku}', '${deskripsi}', '${foto}', '${result[0].id}','${data.id_user}')`;
+          const sql = `INSERT INTO barang (nama_barang, sku, deskripsi, id_brand, id_user) VALUES ('${nama_barang}', '${sku}', '${deskripsi}', '${result[0].id}','${data.id_user}')`;
           db.query(sql, (err, result) => {
             if (err) return errorResponse(500, err.message, res);
 

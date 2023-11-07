@@ -178,7 +178,7 @@ const createUser = (req, res, next) => {
               db.query(sql, (err, result) => {
                 if (err) return errorResponse(500, err.message, res);
                 db.query(
-                  `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${result.insertId}', '${data.id_user}', 'Menambah user baru')`,
+                  `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${result.insertId}', '${data.id_user}', 'Menambah user baru')`,
                   (err, result) => {
                     if (err) return errorResponse(500, err.message, res);
                     next();
