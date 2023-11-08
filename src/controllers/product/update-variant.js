@@ -64,4 +64,85 @@ const updateVariant = (req, res, next) => {
   );
 };
 
+const updateStok = (req, res, next) => {
+  const data = req.tokenDecode;
+  const keterangan = req.params.keterangan;
+  const idVarian = req.params.id;
+  const stok = req.body.stok;
+  const data_log = Object.keys(req.body);
+
+  if (!data) return errorResponse(401, "Invalid token", res);
+
+  if (stok || stok !== undefined) {
+    if (Number.isInteger(stok)) {
+      if (keterangan === "keluar") {
+        db.query(
+          `SELECT id_barang, stok, ukuran FROM varian WHERE id = '${idVarian}'`,
+          (err, result) => {
+            if (err) return errorResponse(500, err.message, res);
+
+            const theResult = result[0];
+
+            if (stok > theResult.stok) {
+              return errorResponse(400, "Out of stock", res);
+            } else {
+              db.query(
+                `UPDATE varian SET stok = stok - ${stok} WHERE id = '${idVarian}'`,
+                (err, result) => {
+                  if (err) return errorResponse(500, err.message, res);
+
+                  db.query(
+                    `INSERT INTO history_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${theResult.id_barang}', '${data.id_user}', 'Pengeluaran stok barang dengan varian ${theResult.ukuran} sebanyak ${stok}')`,
+                    (err, result) => {
+                      if (err) return errorResponse(500, err.message, res);
+                      req.msg = "Pengeluaran"
+                      next();
+                    }
+                  );
+                }
+              );
+            }
+          }
+        );
+      } else if (keterangan === "masuk") {
+        db.query(
+          `SELECT id_barang, stok, ukuran FROM varian WHERE id = '${idVarian}'`,
+          (err, result) => {
+            if (err) return errorResponse(500, err.message, res);
+
+            const theResult = result[0];
+
+            if (stok > theResult.stok) {
+              return errorResponse(400, "Out of stock", res);
+            } else {
+              db.query(
+                `UPDATE varian SET stok = stok + ${stok} WHERE id = '${idVarian}'`,
+                (err, result) => {
+                  if (err) return errorResponse(500, err.message, res);
+
+                  db.query(
+                    `INSERT INTO history_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${theResult.id_barang}', '${data.id_user}', 'Penambahan stok barang dengan varian ${theResult.ukuran} sebanyak ${stok}')`,
+                    (err, result) => {
+                      if (err) return errorResponse(500, err.message, res);
+                      req.msg = "Penambahan"
+                      next();
+                    }
+                  );
+                }
+              );
+            }
+          }
+        );
+      } else {
+        return errorResponse(400, "Invalid params keterangan", res)
+      }
+    } else {
+      return errorResponse(400, "Invalid data stok", res);
+    }
+  } else {
+    return errorResponse(400, "Invalid data stok", res);
+  }
+};
+
 module.exports = updateVariant;
+module.exports = updateStok;

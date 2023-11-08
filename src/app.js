@@ -19,12 +19,13 @@ const updateProduct = require("./controllers/product/update-product.js");
 const statusProduct = require("./controllers/product/update-status-product.js");
 const search = require("./controllers/search/search.js");
 const createBrand = require("./controllers/product/create-brand.js");
+const updateVariant = require("./controllers/product/update-variant.js");
+const updateStok = require("./controllers/product/update-variant.js");
 
 app.use(express.json());
 app.use(cookieParser());
 
-// TODO MEMINDAHKAN PENGECEKAN TOKEN
-// DARI YANG ASALNYA DI COOKIES JADI KE DATABASE
+// TODO BESOK MEMBUAT CONTROLLER UNTUK BARANG KELUAR (PENDING - #DOING - SOLVING)
 
 // <===============================Route Default=============================>
 app.get("/", (req, res) => {
@@ -91,6 +92,15 @@ app.post("/product/varian/create", verifyToken, createVarian, (req, res) => {
   successResponse(200, "", "Upload Variant Product Success", res);
 });
 
+app.patch(
+  "/product/varian/update/:id",
+  verifyToken,
+  updateVariant,
+  (req, res) => {
+    successResponse(200, "", "Update Variant Success", res);
+  }
+);
+
 app.patch("/product/update/:id", verifyToken, updateProduct, (req, res) => {
   successResponse(200, "", "Update Product Success", res);
 });
@@ -101,6 +111,15 @@ app.patch(
   statusProduct,
   (req, res) => {
     successResponse(200, "", "Update Status Variant Product Success", res);
+  }
+);
+
+app.patch(
+  "/product/varian/:keterangan/:id",
+  verifyToken,
+  updateStok,
+  (req, res) => {
+    successResponse(200, "", `${req.msg} stok success`, res);
   }
 );
 
