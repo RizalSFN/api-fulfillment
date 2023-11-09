@@ -25,7 +25,7 @@ const updateStok = require("./controllers/product/update-variant.js");
 app.use(express.json());
 app.use(cookieParser());
 
-// TODO BESOK MEMBUAT CONTROLLER UNTUK BARANG KELUAR (PENDING - #DOING - SOLVING)
+// TODO BESOK MEMBUAT CONTROLLER UNTUK BARANG KELUAR (PENDING - DOING - #SOLVING)
 
 // <===============================Route Default=============================>
 app.get("/", (req, res) => {

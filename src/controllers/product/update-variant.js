@@ -1,5 +1,5 @@
 const errorResponse = require("../../response/error-response.js");
-const db = require("../../application/config.js");
+const db = require("../../connection/config.js");
 
 const updateVariant = (req, res, next) => {
   const data = req.tokenDecode;
@@ -95,7 +95,7 @@ const updateStok = (req, res, next) => {
                     `INSERT INTO history_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${theResult.id_barang}', '${data.id_user}', 'Pengeluaran stok barang dengan varian ${theResult.ukuran} sebanyak ${stok}')`,
                     (err, result) => {
                       if (err) return errorResponse(500, err.message, res);
-                      req.msg = "Pengeluaran"
+                      req.msg = "Pengeluaran";
                       next();
                     }
                   );
@@ -124,7 +124,7 @@ const updateStok = (req, res, next) => {
                     `INSERT INTO history_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${theResult.id_barang}', '${data.id_user}', 'Penambahan stok barang dengan varian ${theResult.ukuran} sebanyak ${stok}')`,
                     (err, result) => {
                       if (err) return errorResponse(500, err.message, res);
-                      req.msg = "Penambahan"
+                      req.msg = "Penambahan";
                       next();
                     }
                   );
@@ -134,7 +134,7 @@ const updateStok = (req, res, next) => {
           }
         );
       } else {
-        return errorResponse(400, "Invalid params keterangan", res)
+        return errorResponse(400, "Invalid params keterangan", res);
       }
     } else {
       return errorResponse(400, "Invalid data stok", res);

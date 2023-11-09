@@ -1,5 +1,5 @@
 const errorResponse = require("../../response/error-response.js");
-const db = require("../../application/config.js");
+const db = require("../../connection/config.js");
 
 const detailUser = (req, res, next) => {
   const data = req.tokenDecode;
@@ -19,7 +19,8 @@ const detailUser = (req, res, next) => {
 
     if (err) return errorResponse(500, err.message, res);
 
-    if (result[0] === undefined) return errorResponse(404, "Data tidak ditemukan", res);
+    if (result[0] === undefined)
+      return errorResponse(404, "Data tidak ditemukan", res);
 
     req.userDetail = result;
     next();

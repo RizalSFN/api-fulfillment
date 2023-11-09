@@ -1,5 +1,5 @@
 const errorResponse = require("../../response/error-response.js");
-const db = require("../../application/config.js");
+const db = require("../../connection/config.js");
 
 const updateStatus = (req, res, next) => {
   const myDate = new Date();
@@ -14,8 +14,8 @@ const updateStatus = (req, res, next) => {
 
     if (!data) return errorResponse(401, "Invalid token", res);
 
-    if (!req.query.id || req.query.id === undefined){
-      return errorResponse(400, "Invalid params", res)
+    if (!req.query.id || req.query.id === undefined) {
+      return errorResponse(400, "Invalid params", res);
     }
 
     if (data.role === "Karyawan") {
@@ -31,22 +31,13 @@ const updateStatus = (req, res, next) => {
           if (err) return errorResponse(500, err.message, res);
 
           if (result.affectedRows === 0) {
-            return errorResponse(
-              400,
-              "Cannot deactivate user",
-              res
-            );
+            return errorResponse(400, "Cannot deactivate user", res);
           }
 
           db.query(
             `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Menonaktifkan user')`,
             (err, result) => {
-              if (err)
-                return errorResponse(
-                  500,
-                  err.message,
-                  res
-                );
+              if (err) return errorResponse(500, err.message, res);
               next();
             }
           );
@@ -58,30 +49,16 @@ const updateStatus = (req, res, next) => {
         sql,
         [req.query.stat, dateFormat, req.query.id],
         (err, result) => {
-          if (err)
-            return errorResponse(
-              500,
-              err.message,
-              res
-            );
+          if (err) return errorResponse(500, err.message, res);
 
           if (result.affectedRows === 0) {
-            return errorResponse(
-              400,
-              "Cannot deactivate user",
-              res
-            );
+            return errorResponse(400, "Cannot deactivate user", res);
           }
 
           db.query(
             `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Menonaktifkan user')`,
             (err, result) => {
-              if (err)
-                return errorResponse(
-                  500,
-                  err.message,
-                  res
-                );
+              if (err) return errorResponse(500, err.message, res);
               next();
             }
           );
@@ -93,8 +70,8 @@ const updateStatus = (req, res, next) => {
 
     if (!data) return errorResponse(401, "Invalid token", res);
 
-    if (!req.query.id || req.query.id === undefined){
-      return errorResponse(400, "Invalid params", res)
+    if (!req.query.id || req.query.id === undefined) {
+      return errorResponse(400, "Invalid params", res);
     }
 
     if (data.role === "Karyawan")
@@ -106,30 +83,16 @@ const updateStatus = (req, res, next) => {
         sql,
         [req.query.stat, dateFormat, req.query.id],
         (err, result) => {
-          if (err)
-            return errorResponse(
-              500,
-              err.message,
-              res
-            );
+          if (err) return errorResponse(500, err.message, res);
 
           if (result.affectedRows === 0) {
-            return errorResponse(
-              400,
-              "Cannot activate user",
-              res
-            );
+            return errorResponse(400, "Cannot activate user", res);
           }
 
           db.query(
             `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Mengaktifkan user')`,
             (err, result) => {
-              if (err)
-                return errorResponse(
-                  500,
-                  err.message,
-                  res
-                );
+              if (err) return errorResponse(500, err.message, res);
               next();
             }
           );
@@ -143,30 +106,16 @@ const updateStatus = (req, res, next) => {
         sql,
         [req.query.stat, dateFormat, req.query.id],
         (err, result) => {
-          if (err)
-            return errorResponse(
-              500,
-              err.message,
-              res
-            );
+          if (err) return errorResponse(500, err.message, res);
 
           if (result.affectedRows === 0) {
-            return errorResponse(
-              400,
-              "Cannot activate user",
-              res
-            );
+            return errorResponse(400, "Cannot activate user", res);
           }
 
           db.query(
             `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${req.query.id}', '${data.id_user}', 'Mengaktifkan user')`,
             (err, result) => {
-              if (err)
-                return errorResponse(
-                  500,
-                  err.message,
-                  res
-                );
+              if (err) return errorResponse(500, err.message, res);
               next();
             }
           );
@@ -174,7 +123,7 @@ const updateStatus = (req, res, next) => {
       );
     }
   } else {
-    return errorResponse(400, "Invalid params", res)
+    return errorResponse(400, "Invalid params", res);
   }
 };
 

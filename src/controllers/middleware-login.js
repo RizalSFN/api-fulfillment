@@ -1,4 +1,4 @@
-const db = require("../application/config.js");
+const db = require("../connection/config.js");
 const bcrypt = require("bcrypt");
 const express = require("express");
 const app = express();

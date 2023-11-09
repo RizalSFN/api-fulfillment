@@ -1,5 +1,5 @@
 const errorResponse = require("../../response/error-response.js");
-const db = require("../../application/config.js");
+const db = require("../../connection/config.js");
 
 const listProduct = (req, res, next) => {
   const data = req.tokenDecode;

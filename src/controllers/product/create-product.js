@@ -1,5 +1,5 @@
 const errorResponse = require("../../response/error-response.js");
-const db = require("../../application/config.js");
+const db = require("../../connection/config.js");
 const express = require("express");
 const app = express();
 
