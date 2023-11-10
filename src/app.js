@@ -1,29 +1,31 @@
 const express = require("express");
 const port = 3000;
 const app = express();
-const loginMiddleware = require("./middleware/middleware-login.js");
+const loginMiddleware = require("./controllers/middleware-login.js");
 const successResponse = require("./response/success-response.js");
-const logoutMiddleware = require("./middleware/middleware-logout.js");
+const logoutMiddleware = require("./controllers/middleware-logout.js");
 const cookieParser = require("cookie-parser");
-const verifyToken = require("./middleware/verify-token.js");
-const listUser = require("./middleware/user/list-users.js");
-const createUser = require("./middleware/user/create-user.js");
-const detailUser = require("./middleware/user/detail-user.js");
-const updateUser = require("./middleware/user/update-user.js");
-const updateStatus = require("./middleware/user/update-status-user.js");
-const listProduct = require("./middleware/product/list-product.js");
-const detailProduct = require("./middleware/product/detail-product.js");
-const createProduct = require("./middleware/product/create-product.js");
-const createVarian = require("./middleware/product/create-variant.js");
-const updateProduct = require("./middleware/product/update-product.js");
-const statusProduct = require("./middleware/product/update-status-product.js");
-const search = require("./middleware/search/search.js");
+const verifyToken = require("./controllers/verify-token.js");
+const listUser = require("./controllers/user/list-users.js");
+const createUser = require("./controllers/user/create-user.js");
+const detailUser = require("./controllers/user/detail-user.js");
+const updateUser = require("./controllers/user/update-user.js");
+const updateStatus = require("./controllers/user/update-status-user.js");
+const listProduct = require("./controllers/product/list-product.js");
+const detailProduct = require("./controllers/product/detail-product.js");
+const createProduct = require("./controllers/product/create-product.js");
+const createVarian = require("./controllers/product/create-variant.js");
+const updateProduct = require("./controllers/product/update-product.js");
+const statusProduct = require("./controllers/product/update-status-product.js");
+const search = require("./controllers/search/search.js");
+const createBrand = require("./controllers/product/create-brand.js");
+const updateVariant = require("./controllers/product/update-variant.js");
+const updateStok = require("./controllers/product/update-variant.js");
 
 app.use(express.json());
 app.use(cookieParser());
 
-// TODO MEMINDAHKAN PENGECEKAN TOKEN
-// DARI YANG ASALNYA DI COOKIES JADI KE DATABASE
+// TODO BESOK MEMBUAT CONTROLLER UNTUK BARANG KELUAR (PENDING - DOING - #SOLVING)
 
 // <===============================Route Default=============================>
 app.get("/", (req, res) => {
@@ -58,7 +60,7 @@ app.get("/users/detail/:id", verifyToken, detailUser, (req, res) => {
 });
 
 app.post("/users/create", verifyToken, createUser, (req, res) => {
-  successResponse(200, "", "Upload User Success", res);
+  successResponse(200, "", "Create New User Success", res);
 });
 
 app.patch("/users/update/:id", verifyToken, updateUser, (req, res) => {
@@ -79,12 +81,25 @@ app.get("/product/detail/:id", verifyToken, detailProduct, (req, res) => {
 });
 
 app.post("/product/create", verifyToken, createProduct, (req, res) => {
-  successResponse(200, "", "Upload Product Success", res);
+  successResponse(200, "", "Create New Product Success", res);
+});
+
+app.post("/product/brand/create", verifyToken, createBrand, (req, res) => {
+  successResponse(200, "", "Create New Brand Success", res);
 });
 
 app.post("/product/varian/create", verifyToken, createVarian, (req, res) => {
   successResponse(200, "", "Upload Variant Product Success", res);
 });
+
+app.patch(
+  "/product/varian/update/:id",
+  verifyToken,
+  updateVariant,
+  (req, res) => {
+    successResponse(200, "", "Update Variant Success", res);
+  }
+);
 
 app.patch("/product/update/:id", verifyToken, updateProduct, (req, res) => {
   successResponse(200, "", "Update Product Success", res);
@@ -96,6 +111,15 @@ app.patch(
   statusProduct,
   (req, res) => {
     successResponse(200, "", "Update Status Variant Product Success", res);
+  }
+);
+
+app.patch(
+  "/product/varian/:keterangan/:id",
+  verifyToken,
+  updateStok,
+  (req, res) => {
+    successResponse(200, "", `${req.msg} stok success`, res);
   }
 );
 

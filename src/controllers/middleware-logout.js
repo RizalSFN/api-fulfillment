@@ -1,4 +1,4 @@
-const db = require("../application/config.js");
+const db = require("../connection/config.js");
 const errorResponse = require("../response/error-response.js");
 
 const logoutMiddleware = (req, res, next) => {

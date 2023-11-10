@@ -1,5 +1,5 @@
 const errorResponse = require("../../response/error-response.js");
-const db = require("../../application/config.js");
+const db = require("../../connection/config.js");
 const { default: isEmail } = require("validator/lib/isEmail.js");
 const express = require("express");
 const app = express();
@@ -76,7 +76,7 @@ const updateUser = (req, res, next) => {
               }
 
               db.query(
-                `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`,
+                `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`,
                 (err, result) => {
                   if (err) return errorResponse(500, err.message, res);
                   next();
@@ -94,7 +94,7 @@ const updateUser = (req, res, next) => {
               }
 
               db.query(
-                `INSERT INTO log_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`,
+                `INSERT INTO history_users (id_user, id_user_aksi, keterangan_aksi) VALUES ('${idUser}', '${data.id_user}', 'Mengupdate user bagian ${data_log}')`,
                 (err, result) => {
                   if (err) return errorResponse(500, err.message, res);
                   next();

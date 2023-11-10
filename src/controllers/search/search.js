@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const db = require("../../application/config.js");
+const db = require("../../connection/config.js");
 const errorResponse = require("../../response/error-response.js");
 
 app.use(express.json());
