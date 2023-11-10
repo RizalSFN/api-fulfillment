@@ -43,7 +43,12 @@ const loginMiddleware = (req, res, next) => {
         expiresIn: "1d",
       });
 
-      const time = Date.now() / 1000 + 86400;
+      const myDate = new Date();
+      const waktu = myDate.toLocaleTimeString();
+      const tanggal = myDate.getDate();
+      const bulan = myDate.getMonth();
+      const tahun = myDate.getFullYear();
+      const dateFormat = `${tahun}-${bulan + 1}-${tanggal + 1} ${waktu}`;
 
       db.query(
         `SELECT * FROM token_akses WHERE id_user = ?`,
@@ -52,7 +57,7 @@ const loginMiddleware = (req, res, next) => {
           if (err) return errorResponse(500, err.message, res);
 
           const tokenAkses = result[0];
-          const nowTime = Date.now() / 1000;
+          const nowTime = `${tahun}-${bulan + 1}-${tanggal} ${waktu}`;
 
           if (tokenAkses !== undefined) {
             const expire = tokenAkses.expire_token;
@@ -65,7 +70,7 @@ const loginMiddleware = (req, res, next) => {
                     return errorResponse(500, err.message, res);
                   }
 
-                  const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${time}')`;
+                  const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${dateFormat}')`;
                   db.query(queri, (err, result) => {
                     if (err) {
                       return errorResponse(500, err.message, res);
@@ -88,7 +93,7 @@ const loginMiddleware = (req, res, next) => {
               return errorResponse(403, "Logout terlebih dahulu", res);
             }
           } else {
-            const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${time}')`;
+            const queri = `INSERT INTO token_akses VALUES ('${user.id}', '${token}', '${dateFormat}')`;
             db.query(queri, (err, result) => {
               if (err) return errorResponse(500, err.message, res);
 
