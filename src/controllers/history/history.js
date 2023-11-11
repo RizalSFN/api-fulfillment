@@ -15,6 +15,8 @@ const historyUsers = (req, res, next) => {
       `SELECT history_users.id, history_users.id_user, history_users.id_user_aksi, users.nama as nama_user_aksi, history_users.keterangan_aksi, history_users.created_at FROM history_users INNER JOIN users ON history_users.id_user_aksi = users.id LIMIT ${startIndex}, ${limit}`,
       (err, result) => {
         if (err) return errorResponse(500, err.message, res);
+        if (page > totalPages)
+            return errorResponse(404, "Data not found", res);
         const dataPage = {
           currentPage: page,
           totalPages: totalPages,
@@ -41,6 +43,8 @@ const historyProducts = (req, res, next) => {
       `SELECT history_barang.id, history_barang.id_barang, history_barang.id_user_aksi, users.nama as nama_user_aksi, history_barang.keterangan_aksi, history_barang.created_at FROM history_barang INNER JOIN users ON history_barang.id_user_aksi = users.id LIMIT ${startIndex}, ${limit}`,
       (err, result) => {
         if (err) return errorResponse(500, err.message, res);
+        if (page > totalPages)
+            return errorResponse(404, "Data not found", res);
         const dataPage = {
           currentPage: page,
           totalPages: totalPages,

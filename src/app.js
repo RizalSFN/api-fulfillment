@@ -56,7 +56,8 @@ app.get("/search", verifyToken, search, (req, res) => {
 // <===============================User Management===========================>
 app.get("/users", verifyToken, listUser, (req, res) => {
   const data = req.userData;
-  successResponse(200, data, "List User", res);
+  const paging = req.pagination
+  successResponse(200, data, "List User", res, paging);
 });
 
 app.get("/users/detail/:id", verifyToken, detailUser, (req, res) => {
@@ -89,7 +90,8 @@ app.get("/users/history/products", verifyToken, historyProducts, (req, res) => {
 
 // <============================Product Management===========================>
 app.get("/product", verifyToken, listProduct, (req, res) => {
-  successResponse(200, req.productData, "List Product", res);
+  const paging = req.pagination
+  successResponse(200, req.productData, "List Product", res, paging);
 });
 
 app.get("/product/detail/:id", verifyToken, detailProduct, (req, res) => {
