@@ -21,6 +21,10 @@ const search = require("./controllers/search/search.js");
 const createBrand = require("./controllers/product/create-brand.js");
 const updateVariant = require("./controllers/product/update-variant.js");
 const updateStok = require("./controllers/product/update-variant.js");
+const {
+  historyUsers,
+  historyProducts,
+} = require("./controllers/history/history.js");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -69,6 +73,18 @@ app.patch("/users/update/:id", verifyToken, updateUser, (req, res) => {
 
 app.patch("/users/status", verifyToken, updateStatus, (req, res) => {
   successResponse(200, "", "Update Status User Success", res);
+});
+
+app.get("/users/history/users", verifyToken, historyUsers, (req, res) => {
+  const paging = req.pagination;
+  const data = req.dataHistory;
+  successResponse(200, data, "History activity users", res, paging);
+});
+
+app.get("/users/history/products", verifyToken, historyProducts, (req, res) => {
+  const paging = req.pagination;
+  const data = req.dataHistory;
+  successResponse(200, data, "History activity products", res, paging);
 });
 
 // <============================Product Management===========================>
