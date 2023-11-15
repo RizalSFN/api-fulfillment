@@ -9,14 +9,6 @@ const errorResponse = (statusCode, msg, res) => {
         status: http.STATUS_CODES[statusCode],
       },
     },
-    // {
-    //   message: "...",
-    //   note: "...",
-    //   status_code: {
-    //     code: "...",
-    //     status: "..."
-    //   }
-    // }
   ]);
 };
 
