@@ -49,7 +49,7 @@ const statusProduct = (req, res, next) => {
       }
     );
   } else {
-    return errorResponse(400, "Invalid request1 status", res);
+    return errorResponse(400, "Invalid request status", res);
   }
 };
 

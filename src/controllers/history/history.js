@@ -41,8 +41,6 @@ const historyProducts = (req, res, next) => {
 
   if (!data) {
     return errorResponse(401, "Invalid token", res);
-  } else if (data.role === "Karyawan") {
-    return errorResponse(403, "Access denied", res);
   }
 
   const page = parseInt(req.query.page) || 1;

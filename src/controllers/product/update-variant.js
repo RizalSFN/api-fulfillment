@@ -24,11 +24,10 @@ const updateVariant = (req, res, next) => {
       if (req.body.harga) {
         if (!Number.isInteger(req.body.harga)) {
           return errorResponse(400, "Invalid price value", res);
-        } else if (req.body.ukuran) {
-          const newUkuran = req.body.ukuran.toUpperCase();
+        } else if (req.body.ukuran || req.body.warna) {
           db.query(
-            `UPDATE varian SET harga = ?, ukuran = ? WHERE id = ?`,
-            [req.body.harga, newUkuran, idVarian],
+            `UPDATE varian SET ? WHERE id = ?`,
+            [req.body, idVarian],
             (err, result) => {
               if (err) return errorResponse(500, err.message, res);
 
@@ -41,12 +40,13 @@ const updateVariant = (req, res, next) => {
               );
             }
           );
+        } else {
+          return errorResponse(400, "Invalid data", res);
         }
-      } else if (req.body.ukuran) {
-        const newUkuran = req.body.ukuran.toUpperCase();
+      } else if (req.body.ukuran || req.body.warna) {
         db.query(
-          `UPDATE varian SET ukuran = ? WHERE id = ?`,
-          [newUkuran, idVarian],
+          `UPDATE varian SET ? WHERE id = ?`,
+          [req.body, idVarian],
           (err, result) => {
             if (err) return errorResponse(500, err.message, res);
 
@@ -59,6 +59,8 @@ const updateVariant = (req, res, next) => {
             );
           }
         );
+      } else {
+        return errorResponse(400, "Invalid data", res);
       }
     }
   );
@@ -69,7 +71,6 @@ const updateStok = (req, res, next) => {
   const keterangan = req.params.keterangan;
   const idVarian = req.params.id;
   const stok = req.body.stok;
-  const data_log = Object.keys(req.body);
 
   if (!data) return errorResponse(401, "Invalid token", res);
 
@@ -112,25 +113,21 @@ const updateStok = (req, res, next) => {
 
             const theResult = result[0];
 
-            if (stok > theResult.stok) {
-              return errorResponse(400, "Out of stock", res);
-            } else {
-              db.query(
-                `UPDATE varian SET stok = stok + ${stok} WHERE id = '${idVarian}'`,
-                (err, result) => {
-                  if (err) return errorResponse(500, err.message, res);
+            db.query(
+              `UPDATE varian SET stok = stok + ${stok} WHERE id = '${idVarian}'`,
+              (err, result) => {
+                if (err) return errorResponse(500, err.message, res);
 
-                  db.query(
-                    `INSERT INTO history_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${theResult.id_barang}', '${data.id_user}', 'Penambahan stok barang dengan varian ${theResult.ukuran} sebanyak ${stok}')`,
-                    (err, result) => {
-                      if (err) return errorResponse(500, err.message, res);
-                      req.msg = "Penambahan";
-                      next();
-                    }
-                  );
-                }
-              );
-            }
+                db.query(
+                  `INSERT INTO history_barang (id_barang, id_user_aksi, keterangan_aksi) VALUES ('${theResult.id_barang}', '${data.id_user}', 'Penambahan stok barang dengan varian ${theResult.ukuran} sebanyak ${stok}')`,
+                  (err, result) => {
+                    if (err) return errorResponse(500, err.message, res);
+                    req.msg = "Penambahan";
+                    next();
+                  }
+                );
+              }
+            );
           }
         );
       } else {
@@ -144,5 +141,7 @@ const updateStok = (req, res, next) => {
   }
 };
 
-module.exports = updateVariant;
-module.exports = updateStok;
+module.exports = {
+  updateVariant,
+  updateStok,
+};
