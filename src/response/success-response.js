@@ -1,5 +1,5 @@
 const http = require("http");
-const successResponse = (statusCode, data, msg, res) => {
+const successResponse = (statusCode, data, msg, res, pagination) => {
   res.status(statusCode).json([
     {
       message: msg,
@@ -9,6 +9,7 @@ const successResponse = (statusCode, data, msg, res) => {
         code: statusCode,
         status: http.STATUS_CODES[statusCode],
       },
+      metadata: pagination ? pagination : "",
     },
   ]);
 };

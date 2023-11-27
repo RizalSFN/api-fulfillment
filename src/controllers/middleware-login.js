@@ -36,7 +36,7 @@ const loginMiddleware = (req, res, next) => {
         id_user: user.id,
         nama: user.nama,
         role: user.role,
-        status: user.status,
+        status: user.status_user,
       };
 
       const token = jwt.sign(data, secret_key, {

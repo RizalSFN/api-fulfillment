@@ -19,8 +19,14 @@ const updateProduct = require("./controllers/product/update-product.js");
 const statusProduct = require("./controllers/product/update-status-product.js");
 const search = require("./controllers/search/search.js");
 const createBrand = require("./controllers/product/create-brand.js");
-const updateVariant = require("./controllers/product/update-variant.js");
-const updateStok = require("./controllers/product/update-variant.js");
+const {
+  updateVariant,
+  updateStok,
+} = require("./controllers/product/update-variant.js");
+const {
+  historyUsers,
+  historyProducts,
+} = require("./controllers/history/history.js");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -52,7 +58,8 @@ app.get("/search", verifyToken, search, (req, res) => {
 // <===============================User Management===========================>
 app.get("/users", verifyToken, listUser, (req, res) => {
   const data = req.userData;
-  successResponse(200, data, "List User", res);
+  const paging = req.pagination;
+  successResponse(200, data, "List User", res, paging);
 });
 
 app.get("/users/detail/:id", verifyToken, detailUser, (req, res) => {
@@ -71,9 +78,16 @@ app.patch("/users/status", verifyToken, updateStatus, (req, res) => {
   successResponse(200, "", "Update Status User Success", res);
 });
 
+app.get("/users/history", verifyToken, historyUsers, (req, res) => {
+  const paging = req.pagination;
+  const data = req.dataHistory;
+  successResponse(200, data, "History activity users", res, paging);
+});
+
 // <============================Product Management===========================>
 app.get("/product", verifyToken, listProduct, (req, res) => {
-  successResponse(200, req.productData, "List Product", res);
+  const paging = req.pagination;
+  successResponse(200, req.productData, "List Product", res, paging);
 });
 
 app.get("/product/detail/:id", verifyToken, detailProduct, (req, res) => {
@@ -89,17 +103,14 @@ app.post("/product/brand/create", verifyToken, createBrand, (req, res) => {
 });
 
 app.post("/product/varian/create", verifyToken, createVarian, (req, res) => {
-  successResponse(200, "", "Upload Variant Product Success", res);
+  successResponse(200, "", "Create Variant Product Success", res);
 });
 
-app.patch(
-  "/product/varian/update/:id",
-  verifyToken,
-  updateVariant,
-  (req, res) => {
-    successResponse(200, "", "Update Variant Success", res);
-  }
-);
+app.get("/product/history", verifyToken, historyProducts, (req, res) => {
+  const paging = req.pagination;
+  const data = req.dataHistory;
+  successResponse(200, data, "History activity products", res, paging);
+});
 
 app.patch("/product/update/:id", verifyToken, updateProduct, (req, res) => {
   successResponse(200, "", "Update Product Success", res);
@@ -111,6 +122,15 @@ app.patch(
   statusProduct,
   (req, res) => {
     successResponse(200, "", "Update Status Variant Product Success", res);
+  }
+);
+
+app.patch(
+  "/product/varian/update/:id",
+  verifyToken,
+  updateVariant,
+  (req, res) => {
+    successResponse(200, "", "Update Variant Success", res);
   }
 );
 

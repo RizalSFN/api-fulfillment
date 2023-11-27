@@ -6,7 +6,7 @@ const logoutMiddleware = (req, res, next) => {
   db.query(
     `DELETE FROM token_akses WHERE token = '${token}'`,
     (err, result) => {
-      if (err) throw errorResponse(500, err.message, res);
+      if (err) return errorResponse(500, err.message, res);
 
       db.query(
         `INSERT INTO history_users (id_user_aksi, keterangan_aksi) VALUES ('${req.tokenDecode.id_user}', 'Melakukan logout')`,
