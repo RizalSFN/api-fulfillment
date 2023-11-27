@@ -139,7 +139,7 @@ app.patch(
   verifyToken,
   updateStok,
   (req, res) => {
-    successResponse(200, `${req.msg} stok success`, res);
+    successResponse(200, "", `${req.msg} stok success`, res);
   }
 );
 

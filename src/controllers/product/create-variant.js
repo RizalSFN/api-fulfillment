@@ -3,7 +3,7 @@ const db = require("../../connection/config.js");
 const express = require("express");
 const app = express();
 
-app.use(express.json()); // UPDATE => Menambahkan input warna dan pengecekan apakah varian dengan id_barang ... sudah ada
+app.use(express.json()); // UPDATE [SOLVED] => Menambahkan input warna dan pengecekan apakah varian dengan id_barang ... sudah ada
 
 const createVarian = (req, res, next) => {
   const data = req.tokenDecode;
@@ -24,7 +24,7 @@ const createVarian = (req, res, next) => {
           return errorResponse(400, "Invalid id barang", res);
         } else if (!stok || stok === undefined || !Number.isInteger(stok)) {
           return errorResponse(400, "Invalid stock", res);
-        } else if (!harga || harga === undefined || !Number.isInteger(stok)) {
+        } else if (!harga || harga === undefined || !Number.isInteger(harga)) {
           return errorResponse(400, "Invalid price", res);
         } else if (!ukuran || ukuran === undefined) {
           return errorResponse(400, "Invalid size", res);
