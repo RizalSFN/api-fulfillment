@@ -46,7 +46,11 @@ app.get("/", (req, res) => {
 // <=====================================Login===============================>
 app.post("/login", loginMiddleware, (req, res) => {
   const token = req.token;
-  res.cookie("TokenJWT", token, { httpOnly: true, maxAge: 172800000 });
+  res.cookie("TokenJWT", token, {
+    httpOnly: true,
+    maxAge: 172800000,
+    sameSite: "lax",
+  });
   successResponse(200, "", "Login Success", res);
 });
 
