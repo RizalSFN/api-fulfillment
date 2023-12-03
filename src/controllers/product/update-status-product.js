@@ -10,9 +10,9 @@ const statusProduct = (req, res, next) => {
   if (!data) return errorResponse(401, "Invalid token", res);
 
   if (!newStatus || newStatus === undefined) {
-    return errorResponse(400, "Invalid request status", res);
+    return errorResponse(400, "Invalid param status", res);
   } else if (!idVarian || idVarian === undefined) {
-    return errorResponse(400, "Invalid params id", res);
+    return errorResponse(400, "Invalid param id", res);
   }
 
   if (newStatus === "unready" || newStatus === "ready") {
@@ -27,7 +27,7 @@ const statusProduct = (req, res, next) => {
           varianResult.id === undefined ||
           varianResult.id_barang === undefined
         ) {
-          return errorResponse(400, "Invalid params id", res);
+          return errorResponse(400, "Invalid param id", res);
         }
 
         const sql = `UPDATE varian SET status_varian = ? WHERE id = ?`;
@@ -49,7 +49,7 @@ const statusProduct = (req, res, next) => {
       }
     );
   } else {
-    return errorResponse(400, "Invalid request status", res);
+    return errorResponse(400, "Invalid param status", res);
   }
 };
 

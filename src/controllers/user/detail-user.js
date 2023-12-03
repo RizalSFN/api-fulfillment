@@ -9,7 +9,7 @@ const detailUser = (req, res, next) => {
     return errorResponse(401, "Invalid token", res);
   }
 
-  if (data.role === "Karyawan") return errorResponse(403, "Akses ditolak", res);
+  if (data.role === "Karyawan") return errorResponse(403, "Access denied", res);
 
   const sql = `SELECT users.id, users.nama, users.email, role_users.role, users.status_user, users.created_at FROM users INNER JOIN role_users ON users.id_role = role_users.id WHERE users.id = ?`;
   db.query(sql, [idUser], (err, result) => {

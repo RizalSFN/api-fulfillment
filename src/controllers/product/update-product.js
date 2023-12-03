@@ -27,6 +27,10 @@ const updateProduct = (req, res, next) => {
     return errorResponse(400, "Cannot update user creator", res);
   }
 
+  if (req.body.id_brand || req.body.id_brand !== undefined) {
+    return errorResponse(400, "Cannot update brand", res);
+  }
+
   const sql = `UPDATE barang SET ?, updated_at = ? WHERE id = ?`;
   db.query(sql, [req.body, dateFormat, idProduct], (err, result) => {
     if (err) return errorResponse(500, err.message, res);
