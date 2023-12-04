@@ -25,8 +25,6 @@ const createProduct = (req, res, next) => {
       return errorResponse(400, "SKU is required", res);
     } else if (!deskripsi || deskripsi === undefined) {
       return errorResponse(400, "Deskripsi is required", res);
-    } else if (!foto || foto === undefined) {
-      return errorResponse(400, "Foto is required", res);
     } else if (!brand || brand === undefined) {
       return errorResponse(400, "Brand is required", res);
     }

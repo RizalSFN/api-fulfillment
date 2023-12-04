@@ -15,7 +15,7 @@ const updateStatus = (req, res, next) => {
     if (!data) return errorResponse(401, "Invalid token", res);
 
     if (!req.query.id || req.query.id === undefined) {
-      return errorResponse(400, "Invalid params", res);
+      return errorResponse(400, "Invalid param id", res);
     }
 
     if (data.role === "Karyawan") {
@@ -123,7 +123,7 @@ const updateStatus = (req, res, next) => {
       );
     }
   } else {
-    return errorResponse(400, "Invalid params", res);
+    return errorResponse(400, "Invalid param stat", res);
   }
 };
 

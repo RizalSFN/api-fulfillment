@@ -20,7 +20,7 @@ const listProduct = (req, res, next) => {
       if (err) return errorResponse(500, err.message, res);
 
       if (result[0] === undefined) {
-        return errorResponse(404, "Data tidak ditemukan", res);
+        return errorResponse(404, "Data not found", res);
       } else if (page > totalPages) {
         return errorResponse(404, "Data not found", res);
       }
